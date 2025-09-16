@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isValid, parse } from '@telegram-apps/init-data-node';
 import { getIronSession } from 'iron-session';
 import { getSession, TelegramSession } from '@/utils/getSession';
-import { NextApiRequest } from 'next';
-import { log } from 'console';
 
 const sessionOptions = {
   cookieName: 'tg_session',
@@ -74,7 +72,7 @@ export async function POST(req: NextRequest) {
 }
 
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: NextRequest) {
   const session = await getSession(req)
   return NextResponse.json({ profile: session.profile }, { status: 200 });
 }

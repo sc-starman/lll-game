@@ -34,7 +34,7 @@ export function ChipsPage() {
       toast.error('Please enter a referral code');
       return;
     }
-    
+
     const success = await processReferral(referralInput.trim());
     if (success) {
       setReferralInput('');
@@ -95,7 +95,7 @@ export function ChipsPage() {
               <CardDescription>Get 3 free chips every day</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button 
+              <Button
                 onClick={handleClaimDaily}
                 disabled={!canClaimDaily || loading}
                 className="w-full"
@@ -126,7 +126,7 @@ export function ChipsPage() {
                   </Badge>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Share Your Link:</label>
                 <div className="flex gap-2">
@@ -149,7 +149,7 @@ export function ChipsPage() {
                 <Share2 className="h-5 w-5 text-purple-500" />
                 Have a Referral Code?
               </CardTitle>
-              <CardDescription>Enter a friend's code to get bonus chips</CardDescription>
+              <CardDescription>Enter a friend&apos;s code to get bonus chips</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
               <Input
@@ -158,7 +158,7 @@ export function ChipsPage() {
                 onChange={(e) => setReferralInput(e.target.value.toUpperCase())}
                 className="font-mono"
               />
-              <Button 
+              <Button
                 onClick={handleProcessReferral}
                 disabled={!referralInput.trim() || loading}
                 className="w-full"

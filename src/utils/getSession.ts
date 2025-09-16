@@ -1,8 +1,8 @@
 import { getIronSession } from 'iron-session';
-import { NextApiRequest } from "next";
+import { NextRequest } from 'next/server';
 
 
-export async function getSession(req: NextApiRequest) {
+export async function getSession(req: NextRequest) {
   return getIronSession<TelegramSession>(
     req,
     { /* dummy Response not needed when reading in RSC */ } as any,

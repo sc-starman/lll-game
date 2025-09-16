@@ -12,7 +12,7 @@ export async function serverSideApi<T = unknown>({
   method = "GET",
   url,
   data,
-  headers = {},
+  headers,
   params,
   responseType = "json",
   nextOptions,
@@ -35,22 +35,12 @@ export async function serverSideApi<T = unknown>({
     });
   }
 
-  const rawHeaders: Record<string, string | string[] | undefined> = {
-    ...headers,
-    'telegram_id': telegramUserId,
-    "Content-Type": "application/json",
-  };
-
-  const finalHeaders: Record<string, string> = Object.fromEntries(
-    Object.entries(rawHeaders)
-      .filter(([, v]) => v !== undefined)
-      .map(([k, v]) => [k, Array.isArray(v) ? v.join("; ") : String(v)])
-  );
+  headers.append("telegram_id", `${telegramUserId}`);
 
   try {
     const res = await fetch(fullUrl.toString(), {
       method,
-      headers: finalHeaders,
+      headers: headers,
       body: ["GET", "HEAD"].includes(method.toUpperCase())
         ? undefined
         : JSON.stringify(data),

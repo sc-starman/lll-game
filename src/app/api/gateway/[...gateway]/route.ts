@@ -1,12 +1,11 @@
 import { getSession } from "@/utils/getSession";
 import { serverSideApi } from "@/utils/serverSideApi.utils";
-import { NextApiRequest } from "next";
 import { headers } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 type DataWithStatus = { status?: number;[key: string]: unknown };
 
-const handleRequest = async (req: NextApiRequest) => {
+const handleRequest = async (req: NextRequest) => {
   const session = await getSession(req);
   
   if (!session)
