@@ -105,8 +105,8 @@ export function useChips() {
 
   const getReferralLink = () => {
     if (!referralCode) return '';
-    const baseUrl = window.location.origin;
-    return `${baseUrl}?ref=${referralCode}`;
+    const baseUrl = 'https://t.me/';
+    return `${baseUrl}${process.env["NEXT_PUBLIC_TELEGRAM_BOT_ID"]}?start=${referralCode}`;
   };
 
   return {
