@@ -1,6 +1,6 @@
 'use client';
 
-import { MobileSlotMachine } from "@/components/MobileSlotMachine";
+import { MobileSlotMachine } from "@/domains/play/MobileSlotMachine";
 
 export default function Home() {
 

@@ -138,3 +138,57 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 } */
+
+
+/* Dark backdrop to let neon pop (optional) */
+.logo-wrap{
+  display:grid; 
+  place-items: start;
+  padding:24px;
+  border-radius:24px;
+}
+
+/* The logo block */
+.logo-lll{
+  width: 65px; height: 65px;
+  background: center/contain no-repeat url("/imgs/logo.png"); /* <-- change path */
+  filter: drop-shadow(0 0 8px #00e6ff);
+  animation: neon-breathe 4.5s ease-in-out infinite, neon-flicker 7s linear infinite;
+  transition: transform .35s ease, filter .35s ease, filter .35s ease, opacity .35s;
+  position: relative;
+}
+
+/* Soft aura behind logo */
+.logo-lll::before{
+  content:"";
+  position:absolute; inset:-12%;
+  border-radius:50%;
+  background: radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,.12) 0%, rgba(0,0,0,0) 70%);
+  filter: blur(18px);
+  z-index:-1;
+  pointer-events:none;
+  animation: aura-pulse 5.5s ease-in-out infinite;
+}
+
+/* “Shine sweep” on hover */
+
+/* Keyframes */
+@keyframes neon-breathe{
+  0%,100%{ filter: drop-shadow(0 0 8px #00e6ff) drop-shadow(0 0 12px #ff33cc) }
+  50%{    filter: drop-shadow(0 0 12px #00e6ff) drop-shadow(0 0 12px #ff33cc) }
+}
+
+@keyframes neon-flicker{
+  0%, 3%, 5%, 8%, 100% { opacity:1 }
+  4%  { opacity:.86 }
+  6%  { opacity:.72 }
+  7%  { opacity:.96 }
+  22% { opacity:1 }
+  23% { opacity:.93 }
+  24% { opacity:1 }
+}
+
+@keyframes aura-pulse{
+  0%,100%{ opacity:.30; transform: scale(1) }
+  50%    { opacity:.55; transform: scale(1) }
+}

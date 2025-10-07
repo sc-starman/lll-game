@@ -8,46 +8,47 @@ interface LeaderboardEntry {
 }
 
 export function useGameData() {
-  const [userStats, setUserStats] = useState({
-    totalScore: 0,
-    totalSpins: 0,
-    totalJackpots: 0,
-    bestScore: 0,
-  });
+  // const [userStats, setUserStats] = useState({
+  //   totalScore: 0,
+  //   totalSpins: 0,
+  //   totalJackpots: 0,
+  //   bestScore: 0,
+  // });
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadUserStats();
+    // loadUserStats();
     loadLeaderboard();
   }, []);
 
-  const loadUserStats = async () => {
+  // const loadUserStats = async () => {
 
-    try {
-      const res = await fetch('/api/gateway/user-stats')
-      const data = await res.json()
+  //   try {
+  //     const res = await fetch('/api/gateway/user-stats')
+  //     const data = await res.json()
 
-      if (!res.ok) {
-        console.error('Error loading user stats:', data);
-        return;
-      }
+  //     if (!res.ok) {
+  //       console.error('Error loading user stats:', data);
+  //       return;
+  //     }
 
-      const { totalScore, totalSpins, totalJackpots, bestScore } = data
-      setUserStats({
-        totalScore,
-        totalSpins,
-        totalJackpots,
-        bestScore,
-      });
+  //     const { totalScore, totalSpins, totalJackpots, bestScore } = data
+  //     setUserStats({
+  //       totalScore,
+  //       totalSpins,
+  //       totalJackpots,
+  //       bestScore,
+  //     });
 
-    } catch (error) {
-      console.error('Error in loadUserStats:', error);
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error in loadUserStats:', error);
+  //   }
+  // };
 
   const loadLeaderboard = async () => {
     try {
+      setLoading(true)
       // Use the new secure leaderboard function
       const res = await fetch('/api/gateway/leaderboard')
       const data = await res.json()
@@ -74,11 +75,11 @@ export function useGameData() {
   };
 
   return {
-    userStats,
+    // userStats,
     leaderboard,
     loading,
     refreshData: () => {
-      loadUserStats();
+      // loadUserStats();
       loadLeaderboard();
     },
   };

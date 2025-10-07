@@ -2,7 +2,16 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
 export function useChips() {
-  const [chips, setChips] = useState(0);
+  const [userStats, setUserStats] = useState({
+    chips: 0,
+    score: 0,
+    spins: 0,
+    jackpots: 0,
+    is_x_verified: false,
+    is_telegram_verified: false,
+    losses: 0,
+    wins: 0
+  });
   const [referralCode, setReferralCode] = useState('');
   const [canClaimDaily, setCanClaimDaily] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -12,7 +21,7 @@ export function useChips() {
   }, []);
 
   const loadUserProfile = async () => {
-
+    setLoading(true);
     try {
       const res = await fetch('/api/gateway/user-profile')
       const profile = await res.json()
@@ -23,13 +32,23 @@ export function useChips() {
       }
 
       if (profile) {
-        setChips(profile.chips);
+        setUserStats({
+          chips: profile.chips,
+          score: profile.score,
+          spins: profile.spins,
+          jackpots: profile.jackpots,
+          is_x_verified: profile.is_x_verified,
+          is_telegram_verified: profile.is_telegram_verified,
+          losses: profile.losses,
+          wins: profile.wins
+        });
         setReferralCode(profile.referral_code);
 
         // Check if can claim daily bonus
         const today = new Date().toDateString();
         const lastBonus = profile.last_daily_bonus ? new Date(profile.last_daily_bonus).toDateString() : null;
         setCanClaimDaily(lastBonus !== today);
+        setLoading(false)
       }
     } catch (error) {
       console.error('Error in loadUserProfile:', error);
@@ -110,7 +129,7 @@ export function useChips() {
   };
 
   return {
-    chips,
+    userStats,
     referralCode,
     canClaimDaily,
     loading,

@@ -16,8 +16,11 @@ import { setLocale } from '@/core/i18n/locale';
 
 import './index.css';
 import { useTelegramAuth } from '@/hooks/useTelegramAuth';
-import { MobileBottomNav } from '../MobileBottomNav';
-
+import { MobileBottomNav } from './MobileBottomNav';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import SplashScreen from './LoadingSplash';
 
 function RootInner({ children }: PropsWithChildren) {
   const lp = useLaunchParams(); // lp.tgWebAppPlatform ['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'
@@ -32,8 +35,12 @@ function RootInner({ children }: PropsWithChildren) {
 
   return (
     <TonConnectUIProvider manifestUrl="/tonconnect-manifest.json">
-      {children}
-      <MobileBottomNav />
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        {children}
+        <MobileBottomNav />
+      </TooltipProvider>
 
     </TonConnectUIProvider>
   );
@@ -51,6 +58,6 @@ export function Root(props: PropsWithChildren) {
       <RootInner {...props} />
     </ErrorBoundary>
   ) : (
-    <div className="root__loading">Loading...</div>
+    <SplashScreen />
   );
 }

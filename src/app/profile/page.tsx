@@ -1,6 +1,6 @@
 'use client';
 
-import { ProfilePage } from "@/components/ProfilePage";
+import { ProfilePage } from "@/domains/profile/ProfilePage";
 
 export default function Profile() {
     return (
