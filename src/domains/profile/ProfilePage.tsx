@@ -95,9 +95,9 @@ export function ProfilePage() {
               </div>
               <div className="rounded-2xl bg-white/5 border border-white/10 py-3 text-center">
                 <div className="text-lg font-bold text-neon-yellow">
-                  {userStats.score.toLocaleString()}
+                  {userStats.referral_count.toLocaleString()}
                 </div>
-                <div className="text-[11px] text-muted-foreground">Score</div>
+                <div className="text-[11px] text-muted-foreground">Referrals</div>
               </div>
             </div>
           </CardContent>

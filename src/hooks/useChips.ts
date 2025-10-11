@@ -6,6 +6,7 @@ export function useChips() {
     chips: 0,
     score: 0,
     spins: 0,
+    referral_count: 0,
     jackpots: 0,
     is_x_verified: false,
     is_telegram_verified: false,
@@ -40,7 +41,8 @@ export function useChips() {
           is_x_verified: profile.is_x_verified,
           is_telegram_verified: profile.is_telegram_verified,
           losses: profile.losses,
-          wins: profile.wins
+          wins: profile.wins,
+          referral_count: profile.referral_count || 0,
         });
         setReferralCode(profile.referral_code);
 
