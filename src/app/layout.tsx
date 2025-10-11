@@ -4,6 +4,7 @@ import { getLocale } from 'next-intl/server';
 
 import { Root } from '@/components/Root/Root';
 import { I18nProvider } from '@/core/i18n/provider';
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <Root>{children}</Root>
         </I18nProvider>
       </body>
+      <GoogleAnalytics gaId="G-VW5CRP219Z" />
     </html>
   );
 }
