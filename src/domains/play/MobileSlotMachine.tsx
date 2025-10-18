@@ -9,6 +9,7 @@ import { defaultConfig, type GameState, getResultMessage } from "@/lib/gameConfi
 import Onboarding from "./components/Onboarding";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { OnboardingInfoButton } from "./components/OnboardingInfoButton";
 
 
 export function MobileSlotMachine() {
@@ -200,7 +201,7 @@ export function MobileSlotMachine() {
 
       {/* Content with proper spacing */}
       <div className="flex-1 flex flex-col space-y-8 px-4 py-4 bg-background">
-        {/* <div className="text-center space-y-2">
+        <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <h1 className="font-bold font-orbitron text-foreground text-2xl">
               <span className="text-primary">L</span>oss <span className="text-primary">L</span>ess <span className="text-primary">L</span>ottery
@@ -209,7 +210,7 @@ export function MobileSlotMachine() {
           <p className="text-muted-foreground font-medium flex items-center justify-center gap-2">
             <OnboardingInfoButton /> Win without losing your funds!
           </p>
-        </div> */}
+        </div>
 
 
 
