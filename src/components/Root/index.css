@@ -2,193 +2,400 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* 
+🎰 Neon Casino & Blockchain Theme - Enhanced Version
+✨ Optimized for Telegram Mini Apps with Cyberpunk Vibes
 */
 
 @layer base {
   :root {
-    /* Neon Slot Machine Theme - Based on reference image */
-    --background: 218 30% 8%;  /* #0D0F16 equivalent */
-    --foreground: 184 100% 87%;
+    /* === BASE COLORS === */
+    --background: 218 35% 6%;      /* Darker for better neon contrast */
+    --foreground: 184 100% 92%;    /* Brighter for readability */
 
-    --card: 236 15% 17%;  /* #2B2434 equivalent */
-    --card-foreground: 184 100% 87%;
+    --card: 236 20% 14%;           /* Darker card background */
+    --card-foreground: 184 100% 90%;
 
-    --popover: 236 15% 17%;
-    --popover-foreground: 184 100% 87%;
+    --popover: 236 20% 12%;
+    --popover-foreground: 184 100% 90%;
 
-    --primary: 184 100% 60%;  /* Cyan primary */
-    --primary-foreground: 218 30% 8%;
+    /* === BRAND COLORS === */
+    --primary: 184 100% 55%;       /* Electric Cyan */
+    --primary-foreground: 218 35% 6%;
 
-    --secondary: 320 100% 65%;  /* Pink secondary */
-    --secondary-foreground: 218 30% 8%;
+    --secondary: 320 100% 60%;     /* Neon Pink/Magenta */
+    --secondary-foreground: 218 35% 6%;
 
-    --muted: 220 20% 15%;
-    --muted-foreground: 220 15% 60%;
+    --tertiary: 280 100% 60%;      /* Purple accent */
+    --tertiary-foreground: 218 35% 6%;
 
-    --accent: 45 100% 65%;  /* Yellow accent */
-    --accent-foreground: 218 30% 8%;
+    --muted: 220 25% 12%;
+    --muted-foreground: 220 15% 55%;
 
-    --destructive: 0 100% 60%;
+    --accent: 45 100% 60%;         /* Gold/Yellow for wins */
+    --accent-foreground: 218 35% 6%;
+
+    --destructive: 0 90% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 25%;
-    --input: 220 15% 25%;
-    --ring: 184 100% 60%;
+    --border: 220 20% 22%;
+    --input: 220 20% 18%;
+    --ring: 184 100% 55%;
 
     --radius: 1.5rem;
 
-    /* Neon Colors - Based on reference image */
-    --neon-cyan: 184 100% 60%;    /* Cyan circles */
-    --neon-pink: 320 100% 65%;    /* Pink glow */
-    --neon-yellow: 45 100% 65%;   /* JACKPOT text */
-    --neon-blue: 220 100% 60%;    /* Deep blue */
-    --neon-purple: 280 100% 65%;
-    --neon-orange: 30 100% 65%;
+    /* === NEON PALETTE === */
+    --neon-cyan: 184 100% 55%;
+    --neon-pink: 320 100% 60%;
+    --neon-purple: 280 100% 60%;
+    --neon-yellow: 45 100% 60%;
+    --neon-orange: 30 100% 60%;
+    --neon-green: 140 100% 50%;
+    --neon-blue: 220 100% 55%;
+    --neon-red: 0 100% 60%;
+    
+    /* === CRYPTO COLORS === */
     --bitcoin-orange: 25 100% 50%;
+    --ethereum-purple: 260 100% 60%;
+    --tether-green: 140 80% 50%;
+    --telegram-blue: 200 100% 50%;
+
+    /* === CASINO ELEMENTS === */
+    --reel-bg: 236 20% 14%;
+    --reel-border: 184 100% 55%;
+    --slot-shadow: 236 30% 8%;
+    --winning-glow: 45 100% 60%;
+    --jackpot-glow: 320 100% 60%;
+    --multiplier-glow: 140 100% 50%;
+
+    /* === GRADIENTS === */
+    --gradient-cyber: linear-gradient(135deg, hsl(320 100% 60% / 0.9), hsl(280 100% 60% / 0.7), hsl(184 100% 55% / 0.9));
+    --gradient-neon-pink-cyan: linear-gradient(135deg, hsl(320 100% 60%), hsl(184 100% 55%));
+    --gradient-neon-radial: radial-gradient(circle at 50% 50%, hsl(184 100% 55% / 0.3), hsl(320 100% 60% / 0.2), transparent 70%);
+    --gradient-machine: linear-gradient(180deg, hsl(236 20% 16%), hsl(220 25% 10%));
+    --gradient-reel: radial-gradient(ellipse at center, hsl(236 20% 18%), hsl(236 25% 10%));
+    --gradient-spin-button: linear-gradient(135deg, hsl(320 100% 60%), hsl(280 100% 60%), hsl(184 100% 55%));
+    --gradient-border: linear-gradient(90deg, hsl(184 100% 55%), hsl(280 100% 60%), hsl(320 100% 60%), hsl(280 100% 60%), hsl(184 100% 55%));
+    --gradient-jackpot: linear-gradient(135deg, hsl(45 100% 60%), hsl(30 100% 60%), hsl(45 100% 60%));
+    --gradient-win: linear-gradient(135deg, hsl(140 100% 50%), hsl(45 100% 60%), hsl(140 100% 50%));
+    --gradient-card: linear-gradient(145deg, hsl(236 20% 16% / 0.8), hsl(236 25% 12% / 0.9));
+    --gradient-glass: linear-gradient(135deg, hsl(184 100% 55% / 0.05), hsl(320 100% 60% / 0.05));
+
+    /* === ENHANCED GLOW EFFECTS === */
+    --glow-cyan: 0 0 20px hsl(var(--neon-cyan) / 0.6), 0 0 40px hsl(var(--neon-cyan) / 0.4), 0 0 60px hsl(var(--neon-cyan) / 0.2);
+    --glow-cyan-strong: 0 0 30px hsl(var(--neon-cyan) / 0.8), 0 0 60px hsl(var(--neon-cyan) / 0.6), 0 0 90px hsl(var(--neon-cyan) / 0.4);
     
-    --reel-bg: 236 15% 17%;       /* #2B2434 */
-    --reel-border: 184 100% 60%;
-    --winning-glow: 184 100% 60%;
-    --jackpot-glow: 320 100% 65%;
-    --symbol-winning: 45 100% 65%;
+    --glow-pink: 0 0 20px hsl(var(--neon-pink) / 0.6), 0 0 40px hsl(var(--neon-pink) / 0.4), 0 0 60px hsl(var(--neon-pink) / 0.2);
+    --glow-pink-strong: 0 0 30px hsl(var(--neon-pink) / 0.8), 0 0 60px hsl(var(--neon-pink) / 0.6), 0 0 90px hsl(var(--neon-pink) / 0.4);
     
-    /* Neon Gradients */
-    --gradient-cyber: linear-gradient(135deg, hsl(320 100% 65%), hsl(184 100% 60%));
-    --gradient-neon: radial-gradient(circle, hsl(184 100% 60%), hsl(320 100% 65%));
-    --gradient-machine: linear-gradient(135deg, hsl(236 15% 17%), hsl(220 20% 12%));
-    --gradient-reel: radial-gradient(circle, hsl(236 15% 20%), hsl(236 15% 12%));
-    --gradient-spin-button: linear-gradient(135deg, hsl(320 100% 65%), hsl(184 100% 60%));
-    --gradient-border: linear-gradient(135deg, hsl(320 100% 65%), hsl(184 100% 60%));
+    --glow-yellow: 0 0 20px hsl(var(--neon-yellow) / 0.7), 0 0 40px hsl(var(--neon-yellow) / 0.5), 0 0 60px hsl(var(--neon-yellow) / 0.3);
+    --glow-yellow-strong: 0 0 30px hsl(var(--neon-yellow) / 0.9), 0 0 60px hsl(var(--neon-yellow) / 0.7), 0 0 90px hsl(var(--neon-yellow) / 0.5);
     
-    /* Neon Glow Effects */
-    --glow-cyan: 0 0 30px hsl(var(--neon-cyan) / 0.8), 0 0 60px hsl(var(--neon-cyan) / 0.6);
-    --glow-pink: 0 0 30px hsl(var(--neon-pink) / 0.8), 0 0 60px hsl(var(--neon-pink) / 0.6);
-    --glow-yellow: 0 0 30px hsl(var(--neon-yellow) / 0.8), 0 0 60px hsl(var(--neon-yellow) / 0.6);
-    --glow-blue: 0 0 30px hsl(var(--neon-blue) / 0.8), 0 0 60px hsl(var(--neon-blue) / 0.6);
-    --glow-spin: 0 0 40px hsl(var(--neon-pink) / 0.9), 0 0 80px hsl(var(--neon-cyan) / 0.7);
+    --glow-purple: 0 0 20px hsl(var(--neon-purple) / 0.6), 0 0 40px hsl(var(--neon-purple) / 0.4), 0 0 60px hsl(var(--neon-purple) / 0.2);
+    --glow-green: 0 0 20px hsl(var(--neon-green) / 0.6), 0 0 40px hsl(var(--neon-green) / 0.4), 0 0 60px hsl(var(--neon-green) / 0.2);
     
-    /* Animations */
+    --glow-spin: 0 0 40px hsl(var(--neon-pink) / 0.9), 0 0 70px hsl(var(--neon-cyan) / 0.7), 0 0 100px hsl(var(--neon-purple) / 0.5);
+    --glow-jackpot: 0 0 50px hsl(var(--neon-yellow) / 1), 0 0 90px hsl(var(--neon-yellow) / 0.8), 0 0 130px hsl(var(--neon-orange) / 0.6);
+    --glow-win: 0 0 40px hsl(var(--neon-green) / 0.9), 0 0 80px hsl(var(--neon-yellow) / 0.7);
+    
+    --glow-border: 0 0 10px hsl(var(--neon-cyan) / 0.5), inset 0 0 10px hsl(var(--neon-pink) / 0.3);
+    --glow-glass: inset 0 1px 2px hsl(184 100% 55% / 0.1), 0 0 20px hsl(184 100% 55% / 0.05);
+
+    /* === ANIMATION TIMINGS === */
     --spin-duration: 700ms;
-    --celebration-duration: 1000ms;
+    --celebration-duration: 1200ms;
+    --pulse-duration: 2000ms;
+    --flicker-duration: 6000ms;
+    --glow-pulse-duration: 3000ms;
 
-    --sidebar-background: 0 0% 98%;
+    /* === TELEGRAM SPECIFIC === */
+    --telegram-bg: 200 100% 45%;
+    --telegram-text: 0 0% 100%;
+    --telegram-button: 200 100% 50%;
+    --telegram-secondary: 200 20% 85%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* === SIDEBAR (Telegram style) === */
+    --sidebar-background: 218 35% 8%;
+    --sidebar-foreground: 184 80% 85%;
+    --sidebar-primary: 200 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 25% 15%;
+    --sidebar-accent-foreground: 184 80% 85%;
+    --sidebar-border: 220 20% 20%;
+    --sidebar-ring: 200 100% 50%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Dark mode already optimized in root */
   }
 }
 
-/* @layer base {
-  * {
-    @apply border-border;
+/* === UTILITY CLASSES === */
+@layer utilities {
+  /* Neon Text Effects */
+  .text-neon-cyan {
+    color: hsl(var(--neon-cyan));
+    text-shadow: var(--glow-cyan);
+  }
+  
+  .text-neon-pink {
+    color: hsl(var(--neon-pink));
+    text-shadow: var(--glow-pink);
+  }
+  
+  .text-neon-yellow {
+    color: hsl(var(--neon-yellow));
+    text-shadow: var(--glow-yellow);
   }
 
-  body {
-    @apply bg-background text-foreground;
+  /* Neon Borders */
+  .border-neon-cyan {
+    border-color: hsl(var(--neon-cyan));
+    box-shadow: var(--glow-border);
   }
-} */
 
+  .border-neon-pink {
+    border-color: hsl(var(--neon-pink));
+    box-shadow: 0 0 10px hsl(var(--neon-pink) / 0.5), inset 0 0 10px hsl(var(--neon-cyan) / 0.3);
+  }
 
-/* Dark backdrop to let neon pop (optional) */
-.logo-wrap{
-  display:grid; 
+  /* Glass Morphism */
+  .glass-card {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(var(--border) / 0.3);
+    box-shadow: var(--glow-glass);
+  }
+
+  /* Glow Effects */
+  .glow-cyan { box-shadow: var(--glow-cyan); }
+  .glow-pink { box-shadow: var(--glow-pink); }
+  .glow-yellow { box-shadow: var(--glow-yellow); }
+  .glow-spin { box-shadow: var(--glow-spin); }
+  .glow-jackpot { box-shadow: var(--glow-jackpot); }
+}
+
+/* === LOGO ANIMATIONS === */
+.logo-wrap {
+  display: grid;
   place-items: start;
-  padding:24px;
-  border-radius:24px;
+  padding: 24px;
+  border-radius: 24px;
 }
 
-/* The logo block */
-.logo-lll{
-  width: 65px; height: 65px;
-  background: center/contain no-repeat url("/imgs/logo.png"); /* <-- change path */
-  filter: drop-shadow(0 0 8px #00e6ff);
-  animation: neon-breathe 4.5s ease-in-out infinite, neon-flicker 7s linear infinite;
-  transition: transform .35s ease, filter .35s ease, filter .35s ease, opacity .35s;
+.logo-lll {
+  width: 65px;
+  height: 65px;
+  background: center/contain no-repeat url("/imgs/logo.png");
+  filter: drop-shadow(0 0 12px hsl(var(--neon-cyan))) drop-shadow(0 0 8px hsl(var(--neon-pink)));
+  animation: neon-breathe 4s ease-in-out infinite, neon-flicker 8s linear infinite;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
   position: relative;
+  cursor: pointer;
 }
 
-/* Soft aura behind logo */
-.logo-lll::before{
-  content:"";
-  position:absolute; inset:-12%;
-  border-radius:50%;
-  background: radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,.12) 0%, rgba(0,0,0,0) 70%);
-  filter: blur(18px);
-  z-index:-1;
-  pointer-events:none;
-  animation: aura-pulse 5.5s ease-in-out infinite;
+.logo-lll:hover {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 0 20px hsl(var(--neon-cyan))) drop-shadow(0 0 16px hsl(var(--neon-pink))) drop-shadow(0 0 12px hsl(var(--neon-purple)));
 }
 
-/* “Shine sweep” on hover */
-
-/* Keyframes */
-@keyframes neon-breathe{
-  0%,100%{ filter: drop-shadow(0 0 8px #00e6ff) drop-shadow(0 0 12px #ff33cc) }
-  50%{    filter: drop-shadow(0 0 12px #00e6ff) drop-shadow(0 0 12px #ff33cc) }
+.logo-lll::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 50%, hsl(184 100% 55% / 0.2) 0%, transparent 70%);
+  filter: blur(25px);
+  z-index: -1;
+  pointer-events: none;
+  animation: aura-pulse 4s ease-in-out infinite;
 }
 
-@keyframes neon-flicker{
-  0%, 3%, 5%, 8%, 100% { opacity:1 }
-  4%  { opacity:.86 }
-  6%  { opacity:.72 }
-  7%  { opacity:.96 }
-  22% { opacity:1 }
-  23% { opacity:.93 }
-  24% { opacity:1 }
+.logo-lll::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 50%, hsl(320 100% 60% / 0.15) 0%, transparent 70%);
+  filter: blur(35px);
+  z-index: -2;
+  pointer-events: none;
+  animation: aura-pulse 4s ease-in-out infinite reverse;
 }
 
-@keyframes aura-pulse{
-  0%,100%{ opacity:.30; transform: scale(1) }
-  50%    { opacity:.55; transform: scale(1) }
+/* === KEYFRAME ANIMATIONS === */
+@keyframes neon-breathe {
+  0%, 100% {
+    filter: drop-shadow(0 0 12px hsl(var(--neon-cyan))) drop-shadow(0 0 8px hsl(var(--neon-pink)));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px hsl(var(--neon-cyan))) drop-shadow(0 0 16px hsl(var(--neon-pink)));
+  }
+}
+
+@keyframes neon-flicker {
+  0%, 4%, 6%, 9%, 11%, 100% { opacity: 1; }
+  5% { opacity: 0.88; }
+  7% { opacity: 0.75; }
+  10% { opacity: 0.92; }
+  27% { opacity: 1; }
+  28% { opacity: 0.90; }
+  29% { opacity: 1; }
+}
+
+@keyframes aura-pulse {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(var(--neon-cyan) / 0.4), 0 0 40px hsl(var(--neon-pink) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px hsl(var(--neon-cyan) / 0.7), 0 0 60px hsl(var(--neon-pink) / 0.5);
+  }
+}
+
+@keyframes border-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes jackpot-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: var(--glow-jackpot);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 60px hsl(var(--neon-yellow) / 1), 0 0 100px hsl(var(--neon-yellow) / 0.9), 0 0 140px hsl(var(--neon-orange) / 0.7);
+  }
+}
+
+@keyframes spin-celebration {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(180deg) scale(1.2); }
+  50% { transform: rotate(360deg) scale(1); }
+  75% { transform: rotate(540deg) scale(1.2); }
+  100% { transform: rotate(720deg) scale(1); }
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* === COMPONENT STYLES === */
+.neon-button {
+  position: relative;
+  background: var(--gradient-spin-button);
+  background-size: 200% 200%;
+  animation: border-flow 3s linear infinite;
+  box-shadow: var(--glow-spin);
+  transition: all 0.3s ease;
+}
+
+.neon-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 50px hsl(var(--neon-pink) / 1), 0 0 80px hsl(var(--neon-cyan) / 0.8);
+}
+
+.neon-button:active {
+  transform: scale(0.95);
+}
+
+.jackpot-text {
+  background: var(--gradient-jackpot);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2s linear infinite, glow-pulse var(--glow-pulse-duration) ease-in-out infinite;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.slot-reel {
+  background: var(--gradient-reel);
+  border: 2px solid hsl(var(--reel-border));
+  box-shadow: var(--glow-cyan), inset 0 2px 8px rgba(0, 0, 0, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.slot-reel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, hsl(184 100% 55% / 0.3), transparent);
+  animation: shimmer 3s linear infinite;
+}
+
+.winning-symbol {
+  animation: jackpot-pulse 1s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px hsl(var(--winning-glow)));
+}
+
+.telegram-header {
+  background: linear-gradient(135deg, hsl(200 100% 50% / 0.15), hsl(200 100% 40% / 0.1));
+  border-bottom: 1px solid hsl(var(--sidebar-border));
+  backdrop-filter: blur(10px);
+}
+
+.crypto-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--gradient-glass);
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: 9999px;
+  box-shadow: var(--glow-cyan);
+  transition: all 0.3s ease;
+}
+
+.crypto-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glow-cyan-strong);
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, hsl(var(--neon-cyan)), hsl(var(--neon-pink)));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, hsl(var(--neon-pink)), hsl(var(--neon-cyan)));
 }

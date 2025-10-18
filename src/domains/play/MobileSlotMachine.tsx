@@ -2,13 +2,15 @@ import { useState, useCallback, useRef } from "react";
 import { SlotMachineUnit } from "./components/SlotMachineUnit";
 import { Scoreboard } from "./components/Scoreboard";
 import { Confetti } from "./components/Confetti";
-import { CurvedHeader } from "./components/CurvedHeader";
-import { SponsorLogos } from "./components/SponsorLogos";
-import { useToast } from "@/hooks/use-toast";
+// import { CurvedHeader } from "./components/CurvedHeader";
+// import { SponsorLogos } from "./components/SponsorLogos";
 import { useChips } from "@/hooks/useChips";
 import { defaultConfig, type GameState, getResultMessage } from "@/lib/gameConfig";
 import Onboarding from "./components/Onboarding";
-import { OnboardingInfoButton } from "./components/OnboardingInfoButton";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+
 export function MobileSlotMachine() {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -22,12 +24,14 @@ export function MobileSlotMachine() {
     }
   };
 
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const {
     userStats,
     loading: isUserStatsLoading,
     refreshProfile
   } = useChips();
+
+  const { push } = useRouter();
 
   const [confetti, setConfetti] = useState<{
     active: boolean;
@@ -51,14 +55,21 @@ export function MobileSlotMachine() {
     }
   };
   const handleSpin = useCallback(async () => {
+
+    const noChips = userStats.chips <= 0;
+    if (noChips) {
+      push('/chips')
+      return;
+    }
+
     if (gameState.isSpinning) return;
 
     // Check if user has chips
     if (userStats.chips <= 0) {
-      toast({
-        title: "No Chips Left!",
+      toast('No Chips Left!', {
+        
         description: "Visit the Chips page to get more chips to play",
-        duration: 3000
+        duration: 3000,
       });
       return;
     }
@@ -73,12 +84,11 @@ export function MobileSlotMachine() {
 
       // Call secure backend spin function
       const res = await fetch('/api/gateway/spin')
-      
+
       const data = await res.json()
       if (!res.ok) {
         console.error('Spin error:', data);
-        toast({
-          title: "Spin Failed",
+        toast("Spin Failed", {
           description: "Please try again",
           duration: 3000
         });
@@ -89,8 +99,7 @@ export function MobileSlotMachine() {
         return;
       }
       if (!data.success) {
-        toast({
-          title: "Spin Failed",
+        toast("Spin Failed", {
           description: data.message || "Please try again",
           duration: 3000
         });
@@ -118,7 +127,7 @@ export function MobileSlotMachine() {
         ...prev,
         jackpots: newJackpots
       }));
-    handlePlaySound();
+      handlePlaySound();
 
       // Update chips display by refreshing profile data
       await refreshProfile();
@@ -126,8 +135,7 @@ export function MobileSlotMachine() {
       // Show result message
       if (result.lCount > 0) {
         triggerHaptic(result.lCount === 3 ? 'heavy' : 'medium');
-        toast({
-          title: result.lCount === 3 ? "🎰 JACKPOT! 🎰" : "🎉 Winner! 🎉",
+        toast(result.lCount === 3 ? "🎰 JACKPOT! 🎰" : "🎉 Winner! 🎉" , {
           description: data.message,
           duration: 3000
         });
@@ -154,16 +162,14 @@ export function MobileSlotMachine() {
           type: 'mild'
         }), 1000);
       } else {
-        toast({
-          title: "Try Again!",
+        toast("Try Again!", {
           description: data.message,
           duration: 2000
         });
       }
     } catch (error) {
       console.error('Error calling spin function:', error);
-      toast({
-        title: "Network Error",
+      toast("Network Error", {
         description: "Please check your connection and try again",
         duration: 3000
       });
@@ -179,9 +185,9 @@ export function MobileSlotMachine() {
     return gameState.lastResult?.reels[index] === 'L' && !gameState.isSpinning;
   };
   return <div className="min-h-screen bg-background flex flex-col pb-20 relative overflow-x-hidden">
-    <Onboarding/>
-          {/* Hidden audio file */}
-      <audio ref={audioRef} src="/effects/spin.mp3" preload="auto" />
+    <Onboarding />
+    {/* Hidden audio file */}
+    <audio ref={audioRef} src="/effects/spin.mp3" preload="auto" />
     {/* Confetti */}
     <Confetti isActive={confetti.active} type={confetti.type} />
 
@@ -190,44 +196,46 @@ export function MobileSlotMachine() {
 
     <div className="relative z-10 flex-1 flex flex-col">
       {/* Curved Header */}
-      <CurvedHeader />
+      {/* <CurvedHeader /> */}
 
       {/* Content with proper spacing */}
       <div className="flex-1 flex flex-col space-y-8 px-4 py-4 bg-background">
-        {/* Title Section */}
-        <div className="text-center space-y-2">
+        {/* <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <h1 className="font-bold font-orbitron text-foreground text-2xl">
               <span className="text-primary">L</span>oss <span className="text-primary">L</span>ess <span className="text-primary">L</span>ottery
             </h1>
           </div>
           <p className="text-muted-foreground font-medium flex items-center justify-center gap-2">
-            <OnboardingInfoButton/> Win without losing your funds! 
+            <OnboardingInfoButton /> Win without losing your funds!
           </p>
-        </div>
+        </div> */}
 
-        {/* Sponsor Logos Section */}
-        <SponsorLogos />
+
+
+
 
         {/* Slot Machine Container */}
-        <div className="flex flex-col items-center gap-6 w-full">
+        <div className="flex flex-col items-center px-8">
           {/* Slot Machine - Centered */}
-          <SlotMachineUnit reels={gameState.lastResult?.reels || ["L", "L", "L"]} isSpinning={gameState.isSpinning} winningReels={Array.from({
-            length: 3
-          }, (_, index) => isWinningReel(index))} onSpin={handleSpin} />
+          <SlotMachineUnit reels={gameState.lastResult?.reels || ["L", "L", "L"]}
+            isSpinning={gameState.isSpinning} noChips={userStats.chips <= 0}
+            winningReels={Array.from({
+              length: 3
+            }, (_, index) => isWinningReel(index))} onSpin={handleSpin} />
 
         </div>
 
         {/* Last Result Message */}
-        {gameState.lastResult && <div className="text-center">
+        {/* {gameState.lastResult && <div className="text-center">
           <p className="text-lg font-medium text-neon-cyan animate-neon-pulse">
             {getResultMessage(gameState.lastResult.lCount, gameState.lastResult.delta)}
           </p>
-        </div>}
+        </div>} */}
 
         {/* Scoreboard */}
         <div className="flex justify-center">
-          <Scoreboard score={userStats.score} chips={userStats.chips} spins={userStats.spins} isLoading={isUserStatsLoading || gameState.isSpinning}/>
+          <Scoreboard score={userStats.score} chips={userStats.chips} spins={userStats.spins} isLoading={isUserStatsLoading || gameState.isSpinning} />
         </div>
       </div>
     </div>

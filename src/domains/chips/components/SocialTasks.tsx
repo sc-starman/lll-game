@@ -6,15 +6,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFo
 import { Twitter, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { openLink } from "@telegram-apps/sdk-react";
-import { useToast } from "@/hooks/use-toast";
 import { useChips } from "@/hooks/useChips";
+import { toast } from "sonner";
 
 export default function FollowUsCard() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<"twitter" | "telegram" | null>(null);
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState<boolean | null>(null);
-  const { toast } = useToast();
   const { refreshProfile, userStats } = useChips();
 
   const handleOpen = (type: "twitter" | "telegram") => {
@@ -36,8 +35,7 @@ export default function FollowUsCard() {
     const data = await res.json()
     if (!res.ok) {
       console.error('Verification error:', data);
-      toast({
-        title: "Verification Failed",
+      toast("Verification Failed", {
         description: "Please try again",
         duration: 3000
       });
@@ -45,8 +43,7 @@ export default function FollowUsCard() {
       return;
     }
     if (!data.success) {
-      toast({
-        title: "Verification Failed",
+      toast("Verification Failed", {
         description: data.message || "Please try again",
         duration: 3000
       });

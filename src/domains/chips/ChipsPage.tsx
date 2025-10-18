@@ -9,12 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Coins,
   Gift,
-  Share2,
   Users,
   Copy,
   Check,
@@ -219,7 +217,7 @@ export function ChipsPage() {
         </Card>
 
         {/* Enter Referral Code */}
-        <Card className="rounded-3xl bg-card/70 backdrop-blur-xl border border-white/10 ring-1 ring-black/20 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
+        {/* <Card className="rounded-3xl bg-card/70 backdrop-blur-xl border border-white/10 ring-1 ring-black/20 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-purple-400/15 border border-purple-400/30">
@@ -249,10 +247,20 @@ export function ChipsPage() {
               Submit Code
             </Button>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Social follow tasks (your existing bottom-sheet UI) */}
         <FollowUsCard />
+
+        {/* Sponsor Logos Section */}
+
+            {/* <div className={cn(
+        "relative w-full max-w-md rounded-2xl",
+        "border border-white/10 bg-white/[0.04] backdrop-blur-xl",
+        "shadow-[0_8px_30px_rgba(0,0,0,0.45)] p-4"
+      )}>
+        <SponsorLogos />
+      </div> */}
       </div>
     </div>
   );

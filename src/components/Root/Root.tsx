@@ -3,11 +3,12 @@
 import { type PropsWithChildren, useEffect } from 'react';
 import {
   initData,
-  miniApp,
-  useLaunchParams,
+  // miniApp,
+  // useLaunchParams,
   useSignal,
 } from '@telegram-apps/sdk-react';
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
+import { ProgressProvider } from '@bprogress/next/app';
 
 import { ErrorBoundary } from '@/components/Error/ErrorBoundary';
 import { ErrorPage } from '@/components/Error/ErrorPage';
@@ -17,15 +18,21 @@ import { setLocale } from '@/core/i18n/locale';
 import './index.css';
 import { useTelegramAuth } from '@/hooks/useTelegramAuth';
 import { MobileBottomNav } from './MobileBottomNav';
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+// import { TooltipProvider } from "@/components/ui/tooltip";
 import SplashScreen from './LoadingSplash';
+import TelegramAnalytics from '@telegram-apps/analytics'
+
 
 function RootInner({ children }: PropsWithChildren) {
-  const lp = useLaunchParams(); // lp.tgWebAppPlatform ['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'
+  TelegramAnalytics.init({
+    token: 'eyJhcHBfbmFtZSI6ImxsbF9sb3NzbGVzc19sb3R0ZXJ5X29uX3RvbiIsImFwcF91cmwiOiJodHRwczovL3QubWUvbGxsX3NwYWNlX2JvdCIsImFwcF9kb21haW4iOiJodHRwczovL3BsYXkubGxsLnNwYWNlIn0=!2qBYE2sXLAMg1iEnHvRDfiva13xIoMJCvfccdxvX5Gs=',
+    appName: 'lll_lossless_lottery_on_ton',
+  });
 
-  const isDark = useSignal(miniApp.isDark);
+  // const lp = useLaunchParams(); // lp.tgWebAppPlatform ['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'
+
+  // const isDark = useSignal(miniApp.isDark);
   const initDataUser = useSignal(initData.user);
 
   // Set the user locale.
@@ -35,13 +42,9 @@ function RootInner({ children }: PropsWithChildren) {
 
   return (
     <TonConnectUIProvider manifestUrl="/tonconnect-manifest.json">
-      <TooltipProvider>
-        <Toaster />
         <Sonner />
         {children}
         <MobileBottomNav />
-      </TooltipProvider>
-
     </TonConnectUIProvider>
   );
 }
@@ -54,9 +57,16 @@ export function Root(props: PropsWithChildren) {
   const isLoading = useTelegramAuth()
 
   return didMount && !isLoading ? (
-    <ErrorBoundary fallback={ErrorPage}>
-      <RootInner {...props} />
-    </ErrorBoundary>
+    <ProgressProvider
+      height="2px"
+      color="#fffd00"
+      options={{ showSpinner: false }}
+      shallowRouting
+    >
+      <ErrorBoundary fallback={ErrorPage}>
+        <RootInner {...props} />
+      </ErrorBoundary>
+    </ProgressProvider>
   ) : (
     <SplashScreen />
   );
