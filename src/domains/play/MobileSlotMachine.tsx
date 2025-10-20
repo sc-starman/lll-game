@@ -186,7 +186,7 @@ export function MobileSlotMachine() {
     return gameState.lastResult?.reels[index] === 'L' && !gameState.isSpinning;
   };
   return <div className="min-h-screen bg-background flex flex-col pb-20 relative overflow-x-hidden">
-    <Onboarding />
+    {/* <Onboarding /> */}
     {/* Hidden audio file */}
     <audio ref={audioRef} src="/effects/spin.mp3" preload="auto" />
     {/* Confetti */}
