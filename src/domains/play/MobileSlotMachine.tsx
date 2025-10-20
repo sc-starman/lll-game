@@ -6,10 +6,11 @@ import { Confetti } from "./components/Confetti";
 // import { SponsorLogos } from "./components/SponsorLogos";
 import { useChips } from "@/hooks/useChips";
 import { defaultConfig, type GameState, getResultMessage } from "@/lib/gameConfig";
-import Onboarding from "./components/Onboarding";
+// import Onboarding from "./components/Onboarding";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { OnboardingInfoButton } from "./components/OnboardingInfoButton";
+import { hapticFeedback } from '@telegram-apps/sdk-react';
 
 
 export function MobileSlotMachine() {
@@ -56,7 +57,8 @@ export function MobileSlotMachine() {
     }
   };
   const handleSpin = useCallback(async () => {
-
+    
+    hapticFeedback.impactOccurred('medium');
     const noChips = userStats.chips <= 0;
     if (noChips) {
       push('/chips')
