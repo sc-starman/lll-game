@@ -5,22 +5,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { useProfile } from "@/hooks/useProfile";
-import { useChips } from "@/hooks/useChips";
+import { useProfile } from "@/contexts/ProfileContext";
 
 // Optional: your public leaderboard URL (landing / mini app deep-link)
 const PUBLIC_URL = "https://lll.space/leaderboard";
 
 export default function LeaderboardPage() {
-  const { userProfile } = useProfile(); // { username, first_name, ... }
-  const { userStats } = useChips();     // e.g., { rank?: number, spins, score, ... }
+  const { profile } = useProfile();     // e.g., { rank?: number, spins, score, ... }
 
   // rank is optional; if not present, we’re in "calculating" mode
   const rank = undefined//userStats?.rank; // undefined or number
   const userName =
-    userProfile?.username
-      ? `@${userProfile.username}`
-      : `${userProfile?.first_name ?? "Player"}`;
+    profile?.username
+      ? `@${profile.username}`
+      : `${profile?.firstName ?? "Player"}`;
 
   const shareText = useMemo(() => {
     const base = rank
@@ -115,9 +113,9 @@ export default function LeaderboardPage() {
               <Separator className="my-3 bg-white/10" />
 
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <div>Spins: <span className="text-foreground font-medium">{userStats?.spins ?? 0}</span></div>
-                <div>Score: <span className="text-foreground font-medium">{userStats?.score ?? 0}</span></div>
-                <div>Wins: <span className="text-foreground font-medium">{userStats?.wins ?? 0}</span></div>
+                <div>Spins: <span className="text-foreground font-medium">{profile?.spins ?? 0}</span></div>
+                <div>Score: <span className="text-foreground font-medium">{profile?.score ?? 0}</span></div>
+                <div>Wins: <span className="text-foreground font-medium">{profile?.wins ?? 0}</span></div>
               </div>
             </div>
 

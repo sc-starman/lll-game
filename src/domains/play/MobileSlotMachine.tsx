@@ -2,11 +2,8 @@ import { useState, useCallback, useRef } from "react";
 import { SlotMachineUnit } from "./components/SlotMachineUnit";
 import { Scoreboard } from "./components/Scoreboard";
 import { Confetti } from "./components/Confetti";
-// import { CurvedHeader } from "./components/CurvedHeader";
-// import { SponsorLogos } from "./components/SponsorLogos";
-import { useChips } from "@/hooks/useChips";
-import { defaultConfig, type GameState, getResultMessage } from "@/lib/gameConfig";
-// import Onboarding from "./components/Onboarding";
+import { useProfile } from "@/contexts/ProfileContext";
+import { defaultConfig, type GameState } from "@/lib/gameConfig";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { OnboardingInfoButton } from "./components/OnboardingInfoButton";
@@ -26,12 +23,11 @@ export function MobileSlotMachine() {
     }
   };
 
-  // const { toast } = useToast();
   const {
-    userStats,
+    profile,
     loading: isUserStatsLoading,
-    refreshProfile
-  } = useChips();
+    updateStats
+  } = useProfile();
 
   const { push } = useRouter();
 
@@ -50,16 +46,10 @@ export function MobileSlotMachine() {
     jackpots: 0
   });
 
-  // Telegram haptic feedback
-  const triggerHaptic = (type: 'light' | 'medium' | 'heavy' = 'medium') => {
-    if (window.Telegram?.WebApp?.HapticFeedback) {
-      window.Telegram.WebApp.HapticFeedback.impactOccurred(type);
-    }
-  };
   const handleSpin = useCallback(async () => {
-    
+
     hapticFeedback.impactOccurred('medium');
-    const noChips = userStats.chips <= 0;
+    const noChips = profile.chips <= 0;
     if (noChips) {
       push('/chips')
       return;
@@ -68,15 +58,14 @@ export function MobileSlotMachine() {
     if (gameState.isSpinning) return;
 
     // Check if user has chips
-    if (userStats.chips <= 0) {
+    if (profile.chips <= 0) {
       toast('No Chips Left!', {
-        
+
         description: "Visit the Chips page to get more chips to play",
         duration: 3000,
       });
       return;
     }
-    triggerHaptic('light');
     setGameState(prev => ({
       ...prev,
       isSpinning: true
@@ -132,13 +121,14 @@ export function MobileSlotMachine() {
       }));
       handlePlaySound();
 
+      updateStats(data.chips, data.score, data.spins, data.jackpots, data.losses, data.wins)
       // Update chips display by refreshing profile data
-      await refreshProfile();
+      // await refreshProfile();
 
       // Show result message
       if (result.lCount > 0) {
-        triggerHaptic(result.lCount === 3 ? 'heavy' : 'medium');
-        toast(result.lCount === 3 ? "🎰 JACKPOT! 🎰" : "🎉 Winner! 🎉" , {
+        hapticFeedback.impactOccurred(result.lCount === 3 ? 'heavy' : 'medium');
+        toast(result.lCount === 3 ? "🎰 JACKPOT! 🎰" : "🎉 Winner! 🎉", {
           description: data.message,
           duration: 3000
         });
@@ -182,7 +172,7 @@ export function MobileSlotMachine() {
       }));
     }
 
-  }, [gameState.isSpinning, sessionStats.jackpots, userStats.chips, toast]);
+  }, [gameState.isSpinning, sessionStats.jackpots, profile.chips, toast]);
 
   const isWinningReel = (index: number): boolean => {
     return gameState.lastResult?.reels[index] === 'L' && !gameState.isSpinning;
@@ -222,7 +212,7 @@ export function MobileSlotMachine() {
         <div className="flex flex-col items-center px-8">
           {/* Slot Machine - Centered */}
           <SlotMachineUnit reels={gameState.lastResult?.reels || ["L", "L", "L"]}
-            isSpinning={gameState.isSpinning} noChips={userStats.chips <= 0}
+            isSpinning={gameState.isSpinning} noChips={profile.chips <= 0}
             winningReels={Array.from({
               length: 3
             }, (_, index) => isWinningReel(index))} onSpin={handleSpin} />
@@ -238,7 +228,7 @@ export function MobileSlotMachine() {
 
         {/* Scoreboard */}
         <div className="flex justify-center">
-          <Scoreboard score={userStats.score} chips={userStats.chips} spins={userStats.spins} isLoading={isUserStatsLoading || gameState.isSpinning} />
+          <Scoreboard score={profile.score} chips={profile.chips} spins={profile.spins} isLoading={isUserStatsLoading || gameState.isSpinning} />
         </div>
       </div>
     </div>

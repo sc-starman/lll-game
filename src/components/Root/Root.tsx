@@ -22,6 +22,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 // import { TooltipProvider } from "@/components/ui/tooltip";
 import SplashScreen from './LoadingSplash';
 import TelegramAnalytics from '@telegram-apps/analytics'
+import { ProfileProvider } from '@/contexts/ProfileContext';
 
 
 function RootInner({ children }: PropsWithChildren) {
@@ -34,7 +35,6 @@ function RootInner({ children }: PropsWithChildren) {
 
   // const isDark = useSignal(miniApp.isDark);
   const initDataUser = useSignal(initData.user);
-
   // Set the user locale.
   useEffect(() => {
     initDataUser && setLocale(initDataUser.language_code);
@@ -43,8 +43,10 @@ function RootInner({ children }: PropsWithChildren) {
   return (
     <TonConnectUIProvider manifestUrl="/tonconnect-manifest.json">
         <Sonner />
-        {children}
-        <MobileBottomNav />
+        <ProfileProvider>
+          {children}
+          <MobileBottomNav />
+        </ProfileProvider>
     </TonConnectUIProvider>
   );
 }

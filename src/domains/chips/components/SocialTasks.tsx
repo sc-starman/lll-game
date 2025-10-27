@@ -6,15 +6,15 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFo
 import { Twitter, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { openLink } from "@telegram-apps/sdk-react";
-import { useChips } from "@/hooks/useChips";
 import { toast } from "sonner";
+import { useProfile } from "@/contexts/ProfileContext";
 
 export default function FollowUsCard() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<"twitter" | "telegram" | null>(null);
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState<boolean | null>(null);
-  const { refreshProfile, userStats } = useChips();
+  const { refreshProfile, profile } = useProfile();
 
   const handleOpen = (type: "twitter" | "telegram") => {
     setActive(type);
@@ -80,7 +80,7 @@ export default function FollowUsCard() {
             onClick={() => handleOpen("twitter")}
           >
             <Twitter className="h-4 w-4 mr-2 text-sky-400" />
-            {userStats?.is_x_verified ? "Already Followed (5 Chips)" : "Follow on X (Twitter)"}
+            {profile?.is_x_verified ? "Already Followed (5 Chips)" : "Follow on X (Twitter)"}
           </Button>
 
           <Button
@@ -89,7 +89,7 @@ export default function FollowUsCard() {
             onClick={() => handleOpen("telegram")}
           >
             <Send className="h-4 w-4 mr-2 text-neon-cyan" />
-            {userStats?.is_telegram_verified ? "Already Joined (10 Chips)" : "Join Telegram Channel"}
+            {profile?.is_telegram_verified ? "Already Joined (10 Chips)" : "Join Telegram Channel"}
           </Button>
         </CardContent>
       </Card>

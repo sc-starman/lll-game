@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,49 +18,49 @@ import {
   Check,
   Send,
 } from "lucide-react";
-import { useChips } from "@/hooks/useChips";
 import { toast } from "sonner";
 import FollowUsCard from "./components/SocialTasks";
 import { cn } from "@/lib/utils";
+import { useProfile } from "@/contexts/ProfileContext";
 
 export function ChipsPage() {
   const {
-    userStats,
+    profile,
     referralCode,
     canClaimDaily,
     loading,
     claimDailyBonus,
-    processReferral,
+    // processReferral,
     getReferralLink,
-  } = useChips();
+  } = useProfile();
 
-  const [referralInput, setReferralInput] = useState("");
+  // const [referralInput, setReferralInput] = useState("");
   const [copied, setCopied] = useState(false);
 
   // Auto-process referral from URL (kept from your original)
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const refCode = urlParams.get("ref");
-    if (refCode && !referralInput) {
-      setReferralInput(refCode);
-      setTimeout(() => {
-        processReferral(refCode);
-      }, 800);
-    }
-  }, [processReferral, referralInput]);
+  // useEffect(() => {
+  //   const urlParams = new URLSearchParams(window.location.search);
+  //   const refCode = urlParams.get("ref");
+  //   if (refCode && !referralInput) {
+  //     setReferralInput(refCode);
+  //     setTimeout(() => {
+  //       processReferral(refCode);
+  //     }, 800);
+  //   }
+  // }, [processReferral, referralInput]);
 
   const handleClaimDaily = async () => {
     await claimDailyBonus();
   };
 
-  const handleProcessReferral = async () => {
-    if (!referralInput.trim()) {
-      toast.error("Please enter a referral code");
-      return;
-    }
-    const success = await processReferral(referralInput.trim());
-    if (success) setReferralInput("");
-  };
+  // const handleProcessReferral = async () => {
+  //   if (!referralInput.trim()) {
+  //     toast.error("Please enter a referral code");
+  //     return;
+  //   }
+  //   const success = await processReferral(referralInput.trim());
+  //   if (success) setReferralInput("");
+  // };
 
   const copyReferralLink = async () => {
     const link = getReferralLink();
@@ -116,13 +116,13 @@ export function ChipsPage() {
           </CardHeader>
           <CardContent className="relative z-10 text-center">
             <div className="text-5xl font-extrabold text-neon-yellow drop-shadow-[0_0_14px_rgba(255,230,0,0.35)] tracking-wider">
-              {userStats.chips}
+              {profile.chips}
             </div>
             <div className="mt-3 mx-auto h-2 w-[80%] rounded-full bg-white/10 overflow-hidden">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-neon-cyan via-neon-yellow to-neon-pink transition-[width] duration-700"
                 style={{
-                  width: `${Math.min(100, (userStats.chips % 50) * 2)}%`,
+                  width: `${Math.min(100, (profile.chips % 50) * 2)}%`,
                 }}
               />
             </div>

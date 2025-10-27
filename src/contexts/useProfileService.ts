@@ -1,8 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
-export function useChips() {
-  const [userStats, setUserStats] = useState({
+export function useProfileService() {
+  const [profile, setProfile] = useState({
+    username: '@',
+    firstName: '...',
+    lastName: '',
+    photoUrl: undefined,
     chips: 0,
     score: 0,
     spins: 0,
@@ -17,9 +21,24 @@ export function useChips() {
   const [canClaimDaily, setCanClaimDaily] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const didInit = useRef(false);
   useEffect(() => {
+    if (didInit.current) return;
+    didInit.current = true;
     loadUserProfile();
   }, []);
+
+  const updateStats = (chips: number, score: number, spins: number, jackpots: number, losses: number, wins: number) => {
+    setProfile({
+      ...profile,
+      chips: chips,
+      score: score,
+      spins: spins,
+      jackpots: jackpots,
+      losses: losses,
+      wins: wins,
+    });
+  }
 
   const loadUserProfile = async () => {
     setLoading(true);
@@ -33,7 +52,7 @@ export function useChips() {
       }
 
       if (profile) {
-        setUserStats({
+        setProfile({
           chips: profile.chips,
           score: profile.score,
           spins: profile.spins,
@@ -43,6 +62,10 @@ export function useChips() {
           losses: profile.losses,
           wins: profile.wins,
           referral_count: profile.referral_count || 0,
+          username: profile.username,
+          firstName: profile.first_name,
+          lastName: profile.last_name,
+          photoUrl: profile.photo_url,
         });
         setReferralCode(profile.referral_code);
 
@@ -87,42 +110,42 @@ export function useChips() {
     }
   };
 
-  const processReferral = async (referralCodeInput: string) => {
+  // const processReferral = async (referralCodeInput: string) => {
 
-    setLoading(true);
-    try {
-      const res = await fetch('/api/gateway/process_referral', {
-        method: 'POST', body: JSON.stringify({
-          referral_code_input: referralCodeInput
-        })
-      })
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch('/api/gateway/process_referral', {
+  //       method: 'POST', body: JSON.stringify({
+  //         referral_code_input: referralCodeInput
+  //       })
+  //     })
 
-      if (!res.ok) {
-        toast.error('Failed to process referral');
-        return false;
-      }
+  //     if (!res.ok) {
+  //       toast.error('Failed to process referral');
+  //       return false;
+  //     }
 
-      const data = await res.json()
+  //     const data = await res.json()
 
-      if (data && data.length > 0) {
-        const result = data[0];
-        if (result.success) {
-          toast.success(result.message);
-          await loadUserProfile(); // Refresh profile data
-          return true;
-        } else {
-          toast.error(result.message);
-          return false;
-        }
-      }
-    } catch (error) {
-      console.error('Error processing referral:', error);
-      toast.error('Failed to process referral');
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (data && data.length > 0) {
+  //       const result = data[0];
+  //       if (result.success) {
+  //         toast.success(result.message);
+  //         await loadUserProfile(); // Refresh profile data
+  //         return true;
+  //       } else {
+  //         toast.error(result.message);
+  //         return false;
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Error processing referral:', error);
+  //     toast.error('Failed to process referral');
+  //     return false;
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const getReferralLink = () => {
     if (!referralCode) return '';
@@ -131,13 +154,14 @@ export function useChips() {
   };
 
   return {
-    userStats,
+    profile,
     referralCode,
     canClaimDaily,
     loading,
     claimDailyBonus,
-    processReferral,
+    // processReferral,
     getReferralLink,
     refreshProfile: loadUserProfile,
+    updateStats
   };
 }
