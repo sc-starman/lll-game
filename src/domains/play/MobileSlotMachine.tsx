@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { OnboardingInfoButton } from "./components/OnboardingInfoButton";
 import { hapticFeedback } from '@telegram-apps/sdk-react';
+import Onboarding from "./components/Onboarding";
 
 
 export function MobileSlotMachine() {
@@ -178,7 +179,7 @@ export function MobileSlotMachine() {
     return gameState.lastResult?.reels[index] === 'L' && !gameState.isSpinning;
   };
   return <div className="min-h-screen bg-background flex flex-col pb-20 relative overflow-x-hidden">
-    {/* <Onboarding /> */}
+    <Onboarding />
     {/* Hidden audio file */}
     <audio ref={audioRef} src="/effects/spin.mp3" preload="auto" />
     {/* Confetti */}
@@ -196,11 +197,11 @@ export function MobileSlotMachine() {
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <h1 className="font-bold font-orbitron text-foreground text-2xl">
-              <span className="text-primary">L</span>oss <span className="text-primary">L</span>ess <span className="text-primary">L</span>ottery
+              <span className="text-primary">L</span>oss <span className="text-primary">L</span>ess <span className="text-primary">L</span>eague
             </h1>
           </div>
           <p className="text-muted-foreground font-medium flex items-center justify-center gap-2">
-            <OnboardingInfoButton /> Win without losing your funds!
+            <OnboardingInfoButton /> Spin. Score. Get ready for the airdrop!
           </p>
         </div>
 
