@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Info } from "lucide-react";
 import OnboardingPopup from "./Onboarding";
 import { useProfile } from "@/contexts/ProfileContext";
-const STORAGE_KEY = "lll_onboarding_seen_v4";
+const STORAGE_KEY = "lll_onboarding_seen_v6";
 
 export function OnboardingInfoButton() {
   const [storageKey, setStorageKey] = useState(STORAGE_KEY);
@@ -15,7 +15,7 @@ export function OnboardingInfoButton() {
       {/* Info Button */}
       <button
         onClick={() => {
-          toggleNavigation()
+          // toggleNavigation()
           setStorageKey(`${storageKey}${Math.random()}`)
         }}
         aria-label="Show onboarding info"
@@ -32,7 +32,7 @@ export function OnboardingInfoButton() {
 
       {/* Onboarding Popup */}
       {/* {showOnboarding && ( */}
-      <OnboardingPopup storageKey={storageKey} key={storageKey}/>
+      <OnboardingPopup storageKey={storageKey} key={storageKey} onOpenClose={() => toggleNavigation()} />
       {/* )} */}
     </>
   );

@@ -7,7 +7,7 @@ import { useProfile } from "@/contexts/ProfileContext";
 
 type OnboardingPopupProps = {
   storageKey: string;
-  onClose?: () => void;
+  onOpenClose?: () => void;
 };
 
 
@@ -24,7 +24,7 @@ type Slide = {
 
 export default function OnboardingPopup({
   storageKey,
-  onClose,
+  onOpenClose: onClose,
 }: OnboardingPopupProps) {
   // Slide content provided
   const slides: Slide[] = [
@@ -83,12 +83,14 @@ export default function OnboardingPopup({
   const rafRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
   const pausedRef = useRef(false);
-
-  const { toggleNavigation } = useProfile();
+  const [shouldClose, setShouldClose] = useState(false);
 
   useEffect(() => {
     const seen = typeof window !== "undefined" && localStorage.getItem(storageKey);
-    if (!seen) setOpen(true);
+    if (!seen) {
+      setOpen(true);
+      onClose?.()
+    }
   }, [storageKey]);
 
   useEffect(() => {
@@ -96,6 +98,12 @@ export default function OnboardingPopup({
     startAnimation();
     return stopAnimation;
   }, [open, index]);
+
+  // notify parent AFTER close (not during render)
+  useEffect(() => {
+    if (shouldClose) onClose?.();
+    setShouldClose(false)
+  }, [shouldClose]);
 
   const startAnimation = () => {
     startRef.current = null;
@@ -124,8 +132,7 @@ export default function OnboardingPopup({
     stopAnimation();
     setOpen(false);
     try { localStorage.setItem(storageKey, "1"); } catch { }
-    onClose?.();
-    toggleNavigation()
+    setShouldClose(true)
   };
 
   const goPrev = () => {
