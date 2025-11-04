@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type React from "react";
-import { Brain, ShieldCheck, Star, Sparkles } from "lucide-react";
-import { useProfile } from "@/contexts/ProfileContext";
+import { Brain, Star, Sparkles } from "lucide-react";
 
 type OnboardingPopupProps = {
   storageKey: string;
@@ -56,7 +55,7 @@ export default function OnboardingPopup({
       subtitle:
         "This pre-launch game helps you earn early rewards and climb the leaderboard.",
       bullets: [
-        "Collect chips from bonuses, referrals & missions.",
+        "Collect chips from bonuses, referrals & quests.",
         "Use chips to spin and collect points",
         "Your spins decide your LLL airdrop share.",
       ],
