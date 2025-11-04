@@ -3,6 +3,7 @@ import { Gamepad2, Coins, User, ChartColumnBig } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useProfile } from "@/contexts/ProfileContext";
 
 type NavItem = {
   path: string;
@@ -13,14 +14,16 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { path: "/", label: "Play", icon: Gamepad2 },
-  { path: "/chips", label: "Chips", icon: Coins, badge: 1 }, // example badge
-  { path: "/leaderboard", label: "Leaderboard", icon: ChartColumnBig }, // example badge
+  { path: "/chips", label: "Tasks", icon: Coins }, // example badge
+  { path: "/leaderboard", label: "Leaders", icon: ChartColumnBig }, // example badge
   { path: "/profile", label: "Profile", icon: User },
 ];
 
 export const MobileBottomNav = () => {
+  const { showNavigation } = useProfile();
   const pathname = usePathname();
 
+  if (!showNavigation) return <></>
   return (
     <nav
       className={cn(
@@ -47,18 +50,19 @@ export const MobileBottomNav = () => {
             const active = pathname === item.path;
 
             // middle button slightly larger
-            const isMiddle = idx === 1;
+            const isMiddle = false;
 
             return (
               <Link
                 key={item.path}
                 href={item.path}
                 className={cn(
-                  "relative inline-flex items-center justify-center",
+                  "relative inline-flex items-center justify-center flex-col gap-0.5",
                   "transition-all duration-200 rounded-full",
-                  isMiddle ? "h-12 w-12" : "h-10 w-10",
+                  // increase height to accommodate label below icon
+                  "h-12 w-12",
                   active
-                    ? "text-white"
+                    ? "text-primary"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -91,8 +95,15 @@ export const MobileBottomNav = () => {
                   )}
                 />
 
-                {/* tiny label tooltip on long-press (visually hidden for now) */}
-                <span className="sr-only">{item.label}</span>
+                {/* visible label under icon */}
+                <span
+                  className={cn(
+                    "text-[10px] leading-3",
+                    active ? "text-white" : "text-muted-foreground"
+                  )}
+                >
+                  {item.label}
+                </span>
 
                 {/* badge (e.g., Chips) */}
                 {item.badge ? (
@@ -109,12 +120,12 @@ export const MobileBottomNav = () => {
                 ) : null}
 
                 {/* active indicator dot under icon */}
-                <span
+                {/* <span
                   className={cn(
                     "pointer-events-none absolute -bottom-1.5 h-1 w-1 rounded-full",
                     active ? "bg-white/80" : "bg-transparent"
                   )}
-                />
+                /> */}
               </Link>
             );
           })}

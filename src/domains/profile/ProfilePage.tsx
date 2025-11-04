@@ -17,7 +17,7 @@ export function ProfilePage() {
       : "0.0";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a15] to-black p-4 pb-[max(88px,env(safe-area-inset-bottom))]">
+    <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a15] to-black p-4 pb-[max(94px,env(safe-area-inset-bottom))]">
       <div className="max-w-md mx-auto space-y-6">
         {/* Header */}
         <div className="pt-4">
@@ -66,7 +66,7 @@ export function ProfilePage() {
                     variant="secondary"
                     className="bg-white/5 text-foreground border border-white/10"
                   >
-                    Crypto Miner
+                    Airdrop Hunter
                   </Badge>
                   <Badge className="bg-neon-cyan/20 text-neon-cyan border-neon-cyan/30">
                     LLL Player

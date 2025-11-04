@@ -20,6 +20,7 @@ export function useProfileService() {
   const [referralCode, setReferralCode] = useState('');
   const [canClaimDaily, setCanClaimDaily] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showNavigation, setShowNavigation] = useState(true);
 
   const didInit = useRef(false);
   useEffect(() => {
@@ -27,6 +28,10 @@ export function useProfileService() {
     didInit.current = true;
     loadUserProfile();
   }, []);
+
+  const toggleNavigation = () => {
+    setShowNavigation(!showNavigation)
+  }
 
   const updateStats = (chips: number, score: number, spins: number, jackpots: number, losses: number, wins: number) => {
     setProfile({
@@ -158,8 +163,9 @@ export function useProfileService() {
     referralCode,
     canClaimDaily,
     loading,
+    showNavigation,
     claimDailyBonus,
-    // processReferral,
+    toggleNavigation,
     getReferralLink,
     refreshProfile: loadUserProfile,
     updateStats

@@ -61,7 +61,7 @@ export default function LeaderboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a15] to-black p-4 pb-[max(88px,env(safe-area-inset-bottom))]">
+    <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a15] to-black p-4 pb-[max(94px,env(safe-area-inset-bottom))]">
       <div className="mx-auto max-w-md space-y-6">
         {/* Header */}
         <div className="pt-4">

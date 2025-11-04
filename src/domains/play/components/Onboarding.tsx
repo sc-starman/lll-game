@@ -1,256 +1,241 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
+import type React from "react";
+import { Brain, ShieldCheck, Star, Sparkles } from "lucide-react";
+import { useProfile } from "@/contexts/ProfileContext";
 
 type OnboardingPopupProps = {
-  storageKey?: string;     // override if needed
-  defaultOpen?: boolean;   // set true to preview during dev
-  onClose?: () => void;    // callback on finish/skip
+  storageKey: string;
+  onClose?: () => void;
 };
 
-const STORAGE_KEY = "lll_onboarding_seen_v2";
+
+type Slide = {
+  title: string;
+  subtitle?: string;
+  content?: string;
+  secondContent?: string;
+  bullets?: string[];
+  cta: string;
+  bg: string; // tailwind gradient classes
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>; // hero icon
+};
 
 export default function OnboardingPopup({
-  storageKey = STORAGE_KEY,
-  defaultOpen,
+  storageKey,
   onClose,
 }: OnboardingPopupProps) {
+  // Slide content provided
+  const slides: Slide[] = [
+    {
+      title: "Welcome to LLL – Lossless League",
+      subtitle:
+        "The pre-launch game of LLL – Lossless Lottery",
+      content: "A new way to win without losing your funds.",
+      // secondContent: "Play now, earn points, and prepare for the upcoming airdrop.",
+      cta: "Start Playing >>",
+      bg: "bg-gradient-to-b from-[#7c2ea6] via-[#7b2cbf] to-[#3a0ca3]",
+      icon: Sparkles,
+    },
+    // {
+    //   title: "What’s the Lossless Lottery?",
+    //   subtitle:
+    //     "A community-powered DeFi platform where every participant keeps their funds safe. Your balance is staked, not spent, while you join transparent on-chain draws.",
+    //   bullets: [
+    //     "100% lossless, yield-based rewards",
+    //     "DAO governance by LLL token holders",
+    //     "Fully built on TON",
+    //   ],
+    //   cta: "Next >>",
+    //   bg: "bg-gradient-to-b from-[#0ea5a5] via-[#059669] to-[#0b3d3d]",
+    //   icon: ShieldCheck,
+    // },
+    {
+      title: "Play → Earn → Rank",
+      subtitle:
+        "This pre-launch game helps you earn early rewards and climb the leaderboard.",
+      bullets: [
+        "Collect chips from bonuses, referrals & missions.",
+        "Use chips to spin and collect points",
+        "Your spins decide your LLL airdrop share.",
+      ],
+      cta: "Got it >>",
+      bg: "bg-gradient-to-b from-[#a7791a] via-[#b45309] to-[#3f2d1b]",
+      icon: Star,
+    },
+    {
+      title: "Join the Mission",
+      subtitle: "Help us build the world’s first Lossless Lottery.",
+      content: "Invite friends, grow the community, and secure your place in the LLL DAO.",
+      // secondContent: "You’re early — and your actions today shape what’s next.",
+      cta: "Done — Start Playing",
+      bg: "bg-gradient-to-b from-[#b91c1c] via-[#991b1b] to-[#471515]",
+      icon: Brain,
+    },
+  ];
+
+  const DURATION_MS = 4500; // per-slide timer
+
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
+  const [index, setIndex] = useState(0);
+  const [progress, setProgress] = useState(0); // 0..1 of current slide
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
+  const pausedRef = useRef(false);
+
+  const { toggleNavigation } = useProfile();
 
   useEffect(() => {
     const seen = typeof window !== "undefined" && localStorage.getItem(storageKey);
-    if (defaultOpen) setOpen(true);
-    else if (!seen) setOpen(true);
-  }, [defaultOpen, storageKey]);
+    if (!seen) setOpen(true);
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!open) return;
+    startAnimation();
+    return stopAnimation;
+  }, [open, index]);
+
+  const startAnimation = () => {
+    startRef.current = null;
+    pausedRef.current = false;
+    const step = (ts: number) => {
+      if (pausedRef.current) return;
+      if (startRef.current == null) startRef.current = ts;
+      const elapsed = ts - startRef.current;
+      const p = Math.min(1, elapsed / DURATION_MS);
+      setProgress(p);
+      if (p >= 1) {
+        goNext();
+        return;
+      }
+      rafRef.current = requestAnimationFrame(step);
+    };
+    rafRef.current = requestAnimationFrame(step);
+  };
+
+  const stopAnimation = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  };
 
   const close = () => {
+    stopAnimation();
     setOpen(false);
-    try { localStorage.setItem(storageKey, "1"); } catch {}
+    try { localStorage.setItem(storageKey, "1"); } catch { }
     onClose?.();
+    toggleNavigation()
+  };
+
+  const goPrev = () => {
+    stopAnimation();
+    setProgress(0);
+    setIndex((i) => Math.max(0, i - 1));
+  };
+
+  const goNext = () => {
+    stopAnimation();
+    setProgress(0);
+    setIndex((i) => {
+      const next = i + 1;
+      if (next >= slides.length) {
+        close();
+        return i;
+      }
+      return next;
+    });
   };
 
   if (!open) return null;
 
+  const current = slides[index];
+
+  // optional footer tagline
+  const tagline = "Train your luck. Participate in the upcoming LLL airdrop.";
+
   return (
-    <div className="fixed inset-0 z-[70]">
-      {/* Backdrop */}
-      <button
-        aria-label="Close onboarding"
-        onClick={close}
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-      />
+    <div
+      className="fixed inset-0 z-[80] overflow-hidden"
+      onPointerDown={() => {
+        pausedRef.current = true;
+        stopAnimation();
+      }}
+      onPointerUp={(e) => {
+        const target = e.target as HTMLElement;
+        if (target?.dataset?.cta === "true") return; // allow CTA tap
+        const x = (e as any).clientX ?? 0;
+        const w = typeof window !== "undefined" ? window.innerWidth : 0;
+        if (w && x < w / 2) goPrev(); else goNext();
+        pausedRef.current = false;
+        startAnimation();
+      }}
+    >
+      {/* full-screen slide background */}
+      <div className={`absolute inset-0 ${current.bg}`} />
+      <div className="absolute inset-0 bg-black/20" />
 
-      {/* Centered popup */}
-      <div className="absolute inset-0 grid place-items-center p-4">
-        <div className="w-full max-w-sm">
-          {/* gradient border frame */}
-          <div className="rounded-3xl p-[1.2px] bg-[conic-gradient(from_140deg_at_50%_50%,rgba(0,230,255,.45),rgba(255,230,0,.45),rgba(255,51,204,.45),rgba(0,230,255,.45))] shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
-            {/* frosted card */}
-            <div className="rounded-[calc(1.5rem-2px)] border border-white/10 bg-white/[0.06] backdrop-blur-xl">
-              {/* header */}
-              <div className="flex items-center justify-between px-5 pt-4 pb-2">
-                <h3 className="font-orbitron text-base bg-gradient-to-r from-neon-cyan via-neon-yellow to-neon-pink bg-clip-text text-transparent">
-                  Welcome to LLL
-                </h3>
-                <button
-                  onClick={close}
-                  className="text-xs text-white/70 hover:text-white/90 rounded-md px-2 py-1 hover:bg-white/10 transition"
-                >
-                  Skip
-                </button>
-              </div>
-
-              {/* content */}
-              <div className="px-5 pb-5">
-                {step === 0 && <PageOne />}
-                {step === 1 && <PageTwo />}
-                {step === 2 && <PageThree />}
-                {step === 3 && <PageFour />}
-
-                {/* progress */}
-                <div className="mt-4 flex items-center justify-center gap-2">
-                  <Dot active={step === 0} />
-                  <Dot active={step === 1} />
-                  <Dot active={step === 2} />
-                  <Dot active={step === 3} />
-                </div>
-
-                {/* actions */}
-                <div className="mt-4 flex items-center justify-between">
-                  <button
-                    onClick={() => setStep((s) => (s === 0 ? 0 : ((s - 1) as any)))}
-                    className="h-9 px-4 rounded-xl text-xs text-white/85 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={step === 0}
-                  >
-                    Back
-                  </button>
-
-                  {step < 3 ? (
-                    <button
-                      onClick={() => setStep((s) => ((s + 1) as any))}
-                      className="h-9 px-5 rounded-xl text-xs font-semibold bg-neon-cyan/20 text-neon-cyan hover:bg-neon-cyan/30 transition"
-                    >
-                      Next
-                    </button>
-                  ) : (
-                    <button
-                      onClick={close}
-                      className="h-9 px-5 rounded-xl text-xs font-semibold bg-neon-yellow/20 text-neon-yellow hover:bg-neon-yellow/30 transition"
-                    >
-                      Done — Start Playing
-                    </button>
-                  )}
-                </div>
-              </div>
+      {/* top progress bars */}
+      <div className="absolute top-[env(safe-area-inset-top)] left-0 right-0 px-4 pt-3">
+        <div className="flex gap-1">
+          {slides.map((_, i) => (
+            <div key={i} className="h-1 flex-1 rounded-full bg-white/25 overflow-hidden">
+              <div
+                className={`h-full bg-white ${i < index ? "w-full" : i > index ? "w-0" : ""}`}
+                style={i === index ? { width: `${progress * 100}%` } : undefined}
+              />
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* content */}
+      <div className="relative h-full flex flex-col items-center justify-center px-6 text-center select-none">
+        {current.icon ? (
+          <current.icon className="mb-4 h-20 w-20 text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.25)]" />
+        ) : null}
+        <h1 className="text-white font-semibold text-3xl leading-tight md:text-4xl font-orbitron">
+          {current.title}
+        </h1>
+        {current.subtitle && (
+          <span className="mt-3 text-white/90 text-sm md:text-base max-w-xs">
+            {current.subtitle}
+          </span>
+        )}
+        {current.content && (
+          <span className="mt-3 text-white/90 text-sm md:text-base max-w-xs">
+            {current.content}
+          </span>
+        )}
+        {current.secondContent && (
+          <span className="mt-3 text-white/90 text-sm md:text-base max-w-xs">
+            {current.secondContent}
+          </span>
+        )}
+        {current.bullets && (
+          <div className="mt-4 space-y-2 text-white/90 text-sm">
+            {current.bullets.map((b, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <span className="inline-block h-2 w-2 rounded-full bg-white/80" />
+                <span>{b}</span>
+              </div>
+            ))}
           </div>
+        )}
 
-          {/* safe-area spacing for small screens */}
-          <div className="h-[max(8px,env(safe-area-inset-bottom))]" />
+        {/* CTA */}
+        <div className="absolute left-0 right-0 bottom-[max(20px,calc(env(safe-area-inset-bottom)+12px))] px-5">
+          <div className="mb-2 text-[11px] text-white/80">{tagline}</div>
+          <button
+            data-cta="true"
+            onPointerUp={(e) => e.stopPropagation()}
+            onClick={goNext}
+            className="w-full h-12 rounded-2xl bg-white text-black font-semibold tracking-wide shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
+          >
+            {current.cta}
+          </button>
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ----------------- Pages ----------------- */
-
-// Page 1: What is LLL? (revised per your 2.a)
-function PageOne() {
-  return (
-    <div className="space-y-3">
-      <h4 className="font-orbitron text-white/90 text-base">What is LLL?</h4>
-      <p className="text-sm text-white/80">
-        <strong>LLL is a Lossless Lottery platform built on TON.</strong> Your
-        principal is not spent; it’s <em>staked</em>. Staking grants you{" "}
-        <strong>tickets</strong> to participate in on-chain lotteries, where{" "}
-        <strong>winners are selected transparently on-chain</strong>.
-      </p>
-      <ul className="mt-1 space-y-1 text-sm text-white/75 list-disc list-inside">
-        <li>On-chain selection → fair & verifiable.</li>
-        <li>Transparent rules, auditable outcomes.</li>
-        <li>Principal remains staked; you keep exposure to yield.</li>
-      </ul>
-      <InfoRow
-        items={[
-          { title: "On TON", text: "Fast, low fees, mobile-first." },
-          { title: "Transparent", text: "On-chain draws, open data." },
-        ]}
-      />
-    </div>
-  );
-}
-
-// Page 2: How LLL works (stake → tickets → draws)
-function PageTwo() {
-  return (
-    <div className="space-y-3">
-      <h4 className="font-orbitron text-white/90 text-base">How it works</h4>
-      <ul className="space-y-2 text-sm text-white/80">
-        <li>
-          <strong>Stake funds</strong> in LLL pools (non-custodial). Your principal is not
-          burned; it keeps working for you.
-        </li>
-        <li>
-          Receive <strong>tickets</strong> that enter periodic on-chain draws.
-        </li>
-        <li>
-          <strong>Winners</strong> are elected on-chain; results are open and auditable.
-        </li>
-        <li>
-          Claim prizes while your staked principal remains intact.
-        </li>
-      </ul>
-      <InfoRow
-        items={[
-          { title: "Tickets", text: "Your entries into draws" },
-          { title: "Lossless", text: "Principal stays staked" },
-        ]}
-      />
-    </div>
-  );
-}
-
-// Page 3: Pre-launch purpose (revised per your 2.b)
-function PageThree() {
-  return (
-    <div className="space-y-3">
-      <h4 className="font-orbitron text-white/90 text-base">Why a pre-launch game?</h4>
-      <p className="text-sm text-white/80">
-        The pre-launch helps us attract <strong>attention, sponsors, and community</strong> so the{" "}
-        <strong>prize pool</strong> is large at official launch. As an early user, you can{" "}
-        <strong>participate in this mission</strong> and earn a share of the{" "}
-        <strong>LLL DAO token airdrop</strong> — empowering you to <strong>vote</strong> and{" "}
-        <strong>shape platform criteria</strong>.
-      </p>
-      <ul className="mt-1 space-y-1 text-sm text-white/75 list-disc list-inside">
-        <li>Grow prize pool before the main release.</li>
-        <li>Be early: help steer product & integrations.</li>
-        <li>Qualify for LLL DAO airdrop & governance.</li>
-      </ul>
-    </div>
-  );
-}
-
-// Page 4: How to play (chips, spins, points)
-function PageFour() {
-  return (
-    <div className="space-y-3">
-      <h4 className="font-orbitron text-white/90 text-base">How to play (pre-launch)</h4>
-      <ul className="space-y-2 text-sm text-white/80">
-        <li>
-          <strong>Chips</strong>: play credits. Get them via daily bonus, referrals, and social tasks.
-        </li>
-        <li>
-          <strong>Spins</strong>: each spin uses chips. Match{" "}
-          <span className="text-neon-yellow font-semibold">L L L</span> for a jackpot.
-        </li>
-        <li>
-          <strong>Points</strong>: your progress for pre-launch leaderboards and airdrop eligibility.
-        </li>
-      </ul>
-      <div className="grid grid-cols-3 gap-2 text-center">
-        <Pill title="Chips" text="play credits" />
-        <Pill title="Spins" text="attempts" />
-        <Pill title="Points" text="rank score" />
-      </div>
-    </div>
-  );
-}
-
-/* ----------------- Bits ----------------- */
-function Dot({ active }: { active: boolean }) {
-  return (
-    <span
-      className={[
-        "h-1.5 w-6 rounded-full transition",
-        active ? "bg-white/90" : "bg-white/30",
-      ].join(" ")}
-    />
-  );
-}
-
-function Pill({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.06] px-2 py-1">
-      <div className="font-orbitron text-[11px] text-white/90">{title}</div>
-      <div className="text-[10px] text-white/60">{text}</div>
-    </div>
-  );
-}
-
-function InfoRow({ items }: { items: { title: string; text: string }[] }) {
-  return (
-    <div className="mt-2 grid grid-cols-2 gap-2">
-      {items.map((it, i) => (
-        <div
-          key={i}
-          className="rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2"
-        >
-          <div className="text-xs font-semibold text-white/85">{it.title}</div>
-          <div className="text-[11px] text-white/70">{it.text}</div>
-        </div>
-      ))}
     </div>
   );
 }

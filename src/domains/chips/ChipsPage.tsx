@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,17 +9,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import {
   Coins,
-  Gift,
-  Users,
-  Copy,
-  Check,
-  Send,
+  // Gift,
+  // Users,
+  // Copy,
+  // Check,
+  // Send,
 } from "lucide-react";
 import { toast } from "sonner";
-import FollowUsCard from "./components/SocialTasks";
+// import FollowUsCard from "./components/SocialTasks";
+import TasksList from "./components/TasksList";
 import { cn } from "@/lib/utils";
 import { useProfile } from "@/contexts/ProfileContext";
 
@@ -84,7 +85,7 @@ export function ChipsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a15] to-black p-4 pb-[max(88px,env(safe-area-inset-bottom))]">
+    <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a15] to-black p-4 pb-[max(94px,env(safe-area-inset-bottom))] pb-20">
       <div className="mx-auto max-w-md space-y-6">
         {/* Header */}
         <div className="pt-4">
@@ -132,8 +133,12 @@ export function ChipsPage() {
           </CardContent>
         </Card>
 
+        {/* Redesigned tasks list (daily + quests) */}
+        <TasksList />
+
+        {/* Daily Bonus (legacy card kept below for reference) */}
         {/* Daily Bonus */}
-        <Card className="rounded-3xl bg-card/70 backdrop-blur-xl border border-white/10 ring-1 ring-black/20 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
+        {/* <Card className="rounded-3xl bg-card/70 backdrop-blur-xl border border-white/10 ring-1 ring-black/20 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-neon-green/15 border border-neon-green/30">
@@ -158,10 +163,10 @@ export function ChipsPage() {
               {canClaimDaily ? "Claim 3 Chips" : "Already claimed today"}
             </Button>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Invite Friends (Referrals) */}
-        <Card className="rounded-3xl bg-card/70 backdrop-blur-xl border border-white/10 ring-1 ring-black/20 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
+        {/* <Card className="rounded-3xl bg-card/70 backdrop-blur-xl border border-white/10 ring-1 ring-black/20 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-sky-400/15 border border-sky-400/30">
@@ -175,20 +180,6 @@ export function ChipsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Your Code */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Your referral code</label>
-              <div className="flex items-center gap-2">
-                <Badge
-                  variant="secondary"
-                  className="text-lg px-4 py-2 font-mono bg-white/5 border border-white/10 text-primary"
-                >
-                  {referralCode}
-                </Badge>
-              </div>
-            </div>
-
-            {/* Share Link */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Share your link</label>
               <div className="flex gap-2">
@@ -214,7 +205,7 @@ export function ChipsPage() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Enter Referral Code */}
         {/* <Card className="rounded-3xl bg-card/70 backdrop-blur-xl border border-white/10 ring-1 ring-black/20 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
@@ -249,8 +240,8 @@ export function ChipsPage() {
           </CardContent>
         </Card> */}
 
-        {/* Social follow tasks (your existing bottom-sheet UI) */}
-        <FollowUsCard />
+        {/* Social follow tasks replaced by inline list above */}
+        {/* <FollowUsCard /> */}
 
         {/* Sponsor Logos Section */}
 
