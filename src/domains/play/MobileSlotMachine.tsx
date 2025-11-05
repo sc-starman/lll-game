@@ -192,21 +192,17 @@ export function MobileSlotMachine() {
       {/* <CurvedHeader /> */}
 
       {/* Content with proper spacing */}
-      <div className="flex-1 flex flex-col space-y-8 px-4 py-4 bg-background">
+      <div className="flex-1 flex flex-col space-y-8 px-4 pt-4 bg-background">
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <h1 className="font-bold font-orbitron text-foreground text-2xl">
-              <span className="text-primary">L</span>oss <span className="text-primary">L</span>ess <span className="text-primary">L</span>eague
+              🎰<span className="text-primary">L</span>oss<span className="text-primary">L</span>ess <span className="text-primary">L</span>eague
             </h1>
           </div>
           <span className="text-muted-foreground font-medium flex items-center justify-center gap-2">
             <OnboardingInfoButton /> Spin. Score. Get ready for the airdrop!
           </span>
         </div>
-
-
-
-
 
         {/* Slot Machine Container */}
         <div className="flex flex-col items-center px-8">
