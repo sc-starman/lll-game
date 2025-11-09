@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { SlotMachineUnit } from "./components/SlotMachineUnit";
 import { Scoreboard } from "./components/Scoreboard";
 import { Confetti } from "./components/Confetti";
@@ -8,6 +8,19 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { OnboardingInfoButton } from "./components/OnboardingInfoButton";
 import { hapticFeedback } from '@telegram-apps/sdk-react';
+
+const CTA_MESSAGES = [
+  "Spin. Score. Get ready for the airdrop!",
+  "Stack chips and climb the leaderboard.",
+  "Every spin boosts your airdrop chances.",
+  "Trigger jackpots to flex your streak.",
+  "Claim rewards before the vault closes.",
+  "Zero-loss spins, maximum hype.",
+  "Tap in daily to keep momentum.",
+  "Unlock achievements for bonus chips.",
+  "Invite friends, dominate the league.",
+  "Precision spins fuel the prize pool."
+] as const;
 
 
 export function MobileSlotMachine() {
@@ -45,6 +58,36 @@ export function MobileSlotMachine() {
   const [sessionStats, setSessionStats] = useState({
     jackpots: 0
   });
+  const [taglineText, setTaglineText] = useState("");
+  const [taglineIndex, setTaglineIndex] = useState(0);
+  const [isDeletingTagline, setIsDeletingTagline] = useState(false);
+  const fullText = CTA_MESSAGES[taglineIndex];
+  const displayTagline = taglineText.length ? taglineText : "\u00A0";
+
+  useEffect(() => {
+    const isComplete = taglineText === fullText;
+    const isEmpty = taglineText.length === 0;
+    const delay = isDeletingTagline ? 50 : isComplete ? 7000 : 120;
+
+    const timeout = setTimeout(() => {
+      if (!isDeletingTagline) {
+        if (!isComplete) {
+          setTaglineText(fullText.slice(0, taglineText.length + 1));
+        } else {
+          setIsDeletingTagline(true);
+        }
+      } else {
+        if (!isEmpty) {
+          setTaglineText(fullText.slice(0, taglineText.length - 1));
+        } else {
+          setIsDeletingTagline(false);
+          setTaglineIndex(prev => (prev + 1) % CTA_MESSAGES.length);
+        }
+      }
+    }, delay);
+
+    return () => clearTimeout(timeout);
+  }, [taglineText, isDeletingTagline, fullText]);
 
   const handleSpin = useCallback(async () => {
 
@@ -195,14 +238,19 @@ export function MobileSlotMachine() {
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <h1 className="font-bold font-orbitron text-foreground text-2xl flex items-center gap-2 justify-center">
-              <img width={36} src="/imgs/logo.png" />
+              <OnboardingInfoButton />
               <div>
                 <span className="text-neon-yellow">L</span>oss<span className="text-neon-yellow">L</span>ess <span className="text-neon-yellow">L</span>eague
               </div>
             </h1>
           </div>
           <span className="text-muted-foreground font-medium flex items-center justify-center gap-2">
-            <OnboardingInfoButton /> Spin. Score. Get ready for the airdrop!
+            <span className="inline-grid justify-items-start">
+              <span className="col-start-1 row-start-1 inline-flex items-center gap-1 min-h-[20px]">
+                {displayTagline}
+                <span className="h-5 w-px bg-muted-foreground animate-pulse" />
+              </span>
+            </span>
           </span>
         </div>
 
