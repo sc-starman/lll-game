@@ -60,7 +60,6 @@ export function MobileSlotMachine() {
     // Check if user has chips
     if (profile.chips <= 0) {
       toast('No Chips Left!', {
-
         description: "Visit the Chips page to get more chips to play",
         duration: 3000,
       });
@@ -195,8 +194,11 @@ export function MobileSlotMachine() {
       <div className="flex-1 flex flex-col space-y-8 px-4 pt-4 bg-background">
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
-            <h1 className="font-bold font-orbitron text-foreground text-2xl">
-              🎰<span className="text-primary">L</span>oss<span className="text-primary">L</span>ess <span className="text-primary">L</span>eague
+            <h1 className="font-bold font-orbitron text-foreground text-2xl flex items-center gap-2 justify-center">
+              <img width={36} src="/imgs/logo.png" />
+              <div>
+                <span className="text-neon-yellow">L</span>oss<span className="text-neon-yellow">L</span>ess <span className="text-neon-yellow">L</span>eague
+              </div>
             </h1>
           </div>
           <span className="text-muted-foreground font-medium flex items-center justify-center gap-2">
@@ -209,6 +211,7 @@ export function MobileSlotMachine() {
           {/* Slot Machine - Centered */}
           <SlotMachineUnit reels={gameState.lastResult?.reels || ["L", "L", "L"]}
             isSpinning={gameState.isSpinning} noChips={profile.chips <= 0}
+            chips={profile.chips}
             winningReels={Array.from({
               length: 3
             }, (_, index) => isWinningReel(index))} onSpin={handleSpin} />

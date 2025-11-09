@@ -69,7 +69,7 @@ export default function OnboardingPopup({
       content: "Invite friends, grow the community, and secure your place in the LLL DAO.",
       // secondContent: "You’re early — and your actions today shape what’s next.",
       cta: "Done — Start Playing",
-      bg: "bg-gradient-to-b from-[#b91c1c] via-[#991b1b] to-[#471515]",
+      bg: "bg-gradient-to-b from-[#52a9ff] via-[#1af0ff] to-[#0060d1]",
       icon: Brain,
     },
   ];

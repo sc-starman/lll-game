@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import {TicketPlus, Tags, Coins} from 'lucide-react'
 
 interface SlotMachineUnitProps {
   reels: string[];
@@ -8,6 +9,7 @@ interface SlotMachineUnitProps {
   onSpin: () => void;
   noChips?: boolean;
   jackpot?: boolean;
+  chips: number;
 }
 
 export function SlotMachineUnit({ 
@@ -16,7 +18,8 @@ export function SlotMachineUnit({
   winningReels, 
   onSpin, 
   noChips,
-  jackpot = false 
+  chips,
+  jackpot = false
 }: SlotMachineUnitProps) {
   const [particles, setParticles] = useState<Array<{id: number; x: number; y: number}>>([]);
   const hasWin = winningReels.some(w => w);
@@ -128,8 +131,8 @@ export function SlotMachineUnit({
         )}>
           {noChips ? (
             <span className="flex flex-col items-center gap-1">
-              <span className="text-xl">🪙</span>
-              <span className="text-sm">GET CHIPS</span>
+              <span className="text-xl"><Coins className="h-7 w-7 shrink-0 transition-transform duration-200"/></span>
+              <span className="text-base tracking-widest">GET CHIPS</span>
             </span>
           ) : isSpinning ? (
             <span className="flex flex-col items-center gap-1">
@@ -137,7 +140,10 @@ export function SlotMachineUnit({
               <span className="text-xs tracking-wider">SPINNING</span>
             </span>
           ) : (
-            <span className="tracking-widest">SPIN</span>
+            <div className="flex flex-col items-center gap-1">
+              <span className="tracking-widest">SPIN</span>
+              <span className="text-lg tracking-widest flex items-center gap-1 text-neon-yellow"><Coins className="h-5 w-5 shrink-0 transition-transform duration-200"/>+{chips}</span>
+            </div>
           )}
         </span>
 

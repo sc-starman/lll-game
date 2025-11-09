@@ -18,7 +18,7 @@ import {
   // Check,
   // Send,
 } from "lucide-react";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 // import FollowUsCard from "./components/SocialTasks";
 import TasksList from "./components/TasksList";
 import { cn } from "@/lib/utils";
@@ -27,12 +27,12 @@ import { useProfile } from "@/contexts/ProfileContext";
 export function ChipsPage() {
   const {
     profile,
-    referralCode,
-    canClaimDaily,
-    loading,
-    claimDailyBonus,
+    // referralCode,
+    // canClaimDaily,
+    // loading,
+    // claimDailyBonus,
     // processReferral,
-    getReferralLink,
+    // getReferralLink,
   } = useProfile();
 
   // const [referralInput, setReferralInput] = useState("");
@@ -50,9 +50,9 @@ export function ChipsPage() {
   //   }
   // }, [processReferral, referralInput]);
 
-  const handleClaimDaily = async () => {
-    await claimDailyBonus();
-  };
+  // const handleClaimDaily = async () => {
+  //   await claimDailyBonus();
+  // };
 
   // const handleProcessReferral = async () => {
   //   if (!referralInput.trim()) {
@@ -63,26 +63,26 @@ export function ChipsPage() {
   //   if (success) setReferralInput("");
   // };
 
-  const copyReferralLink = async () => {
-    const link = getReferralLink();
-    try {
-      await navigator.clipboard.writeText(link);
-      setCopied(true);
-      toast.success("Referral link copied!");
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast.error("Failed to copy link");
-    }
-  };
+  // const copyReferralLink = async () => {
+  //   const link = getReferralLink();
+  //   try {
+  //     await navigator.clipboard.writeText(link);
+  //     setCopied(true);
+  //     toast.success("Referral link copied!");
+  //     setTimeout(() => setCopied(false), 2000);
+  //   } catch {
+  //     toast.error("Failed to copy link");
+  //   }
+  // };
 
-  const shareToTelegram = () => {
-    const link = getReferralLink();
-    const text = `🎰 Join me on Lossless Lottery! Use my referral code and we both get chips to play! ${link}`;
-    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(
-      link
-    )}&text=${encodeURIComponent(text)}`;
-    window.open(telegramUrl, "_blank", "noopener,noreferrer");
-  };
+  // const shareToTelegram = () => {
+  //   const link = getReferralLink();
+  //   const text = `🎰 Join me on Lossless Lottery! Use my referral code and we both get chips to play! ${link}`;
+  //   const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(
+  //     link
+  //   )}&text=${encodeURIComponent(text)}`;
+  //   window.open(telegramUrl, "_blank", "noopener,noreferrer");
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a15] to-black p-4 pb-[max(94px,env(safe-area-inset-bottom))] pb-20">
