@@ -1,171 +1,347 @@
-"use client";
+import React, { useEffect, useState } from "react";
+import { WeeklyPodiumClassic } from "./components/Podium";
 
-import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { useProfile } from "@/contexts/ProfileContext";
+type SpinEntry = {
+  rank: number;
+  id: string;
+  telegram_id: number;
+  display_name: string;
+  spins: number;
+  score: number;
+  jackpots: number;
+  last_played_time: string;
+};
 
-// Optional: your public leaderboard URL (landing / mini app deep-link)
-const PUBLIC_URL = "https://lll.space/leaderboard";
+type WeeklyEntry = {
+  rank: number;
+  id: string;
+  telegram_id: number;
+  display_name: string;
+  total_score: number;
+  total_jackpots: number;
+};
 
-export default function LeaderboardPage() {
-  const { profile } = useProfile();     // e.g., { rank?: number, spins, score, ... }
+type ReferralEntry = {
+  rank: number;
+  id: string;
+  telegram_id: number;
+  display_name: string;
+  referrals: number;
+};
 
-  // rank is optional; if not present, we’re in "calculating" mode
-  const rank = undefined//userStats?.rank; // undefined or number
-  const userName =
-    profile?.username
-      ? `@${profile.username}`
-      : `${profile?.firstName ?? "Player"}`;
+type LeaderboardsResponse = {
+  spins: {
+    top10: SpinEntry[];
+    me: SpinEntry | null;
+  };
+  weekly_score: {
+    top3: WeeklyEntry[];
+    me: WeeklyEntry | null;
+  };
+  referrals: {
+    top10: ReferralEntry[];
+    me: ReferralEntry | null;
+  };
+};
 
-  const shareText = useMemo(() => {
-    const base = rank
-      ? `I’m currently #${rank} on the LLL Leaderboard!`
-      : `Leaderboard is being calculated, but I’m already playing LLL!`;
-    return `${base} 🎰✨\nPlay the Lossless Lottery on TON.\n`;
-  }, [rank]);
+type Props = {
+};
 
-  const shareUrl = useMemo(() => {
-    // Include something unique (e.g., referral or tg id) if you have it
-    return PUBLIC_URL;
+type TabKey = "spins" | "referrals";
+
+const LeaderboardsPage: React.FC<Props> = () => {
+  const [data, setData] = useState<LeaderboardsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<TabKey>("spins");
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch(
+          `/api/gateway/leaderboard`
+        );
+        if (!res.ok) throw new Error("Failed to load leaderboards");
+        const json = (await res.json()) as LeaderboardsResponse;
+        setData(json);
+      } catch (e: any) {
+        setError(e.message ?? "Unexpected error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
-  const onShareTelegram = () => {
-    const text = encodeURIComponent(shareText);
-    const url = encodeURIComponent(shareUrl);
-    const tgShare = `https://t.me/share/url?url=${url}&text=${text}`;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#050816] text-slate-100">
+        <div className="max-w-sm mx-auto px-3 py-4 space-y-3">
+          <Header />
+          <SkeletonBox />
+          <SkeletonBox />
+        </div>
+      </div>
+    );
+  }
 
-    // Mini App native open, with graceful fallback
-    // @ts-ignore
-    const tg = typeof window !== "undefined" ? window?.Telegram?.WebApp : null;
-    if (tg?.openTelegramLink) {
-      tg.openTelegramLink(tgShare);
-    } else {
-      window.open(tgShare, "_blank", "noopener,noreferrer");
-    }
-  };
+  if (error || !data) {
+    return (
+      <div className="min-h-screen bg-[#050816] text-slate-100">
+        <div className="max-w-sm mx-auto px-3 py-4 space-y-3">
+          <Header />
+          <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/40 rounded-xl px-3 py-2">
+            Failed to load leaderboards: {error}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-  const onShareTwitter = () => {
-    const text = encodeURIComponent(shareText);
-    const url = encodeURIComponent(shareUrl);
-    const tw = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
-    // @ts-ignore
-    const tg = typeof window !== "undefined" ? window?.Telegram?.WebApp : null;
-    if (tg?.openLink) {
-      tg.openLink(tw);
-    } else {
-      window.open(tw, "_blank", "noopener,noreferrer");
-    }
-  };
+  const { spins, weekly_score, referrals } = data;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-[#0a0a15] to-black p-4 pb-[max(94px,env(safe-area-inset-bottom))]">
-      <div className="mx-auto max-w-md space-y-6">
-        {/* Header */}
-        <div className="pt-4">
-          <h1 className="text-3xl font-bold font-orbitron bg-gradient-to-r from-neon-cyan via-neon-yellow to-neon-pink bg-clip-text text-transparent tracking-wide">
-            Leaderboard
-          </h1>
-          <p className="mt-1 text-xs text-muted-foreground">Lossless Lottery on TON</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-[#050816] via-[#050816] to-[#020617] text-slate-50 pb-[max(94px,env(safe-area-inset-bottom))]">
+      <div className="max-w-sm mx-auto px-3 space-y-4">
+        <Header />
 
-        {/* Coming Soon / Calculating Card */}
-        <Card className="rounded-3xl bg-card/70 backdrop-blur-xl border border-white/10 ring-1 ring-black/20 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-neon-cyan">Global Rankings</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            {/* Neon loader row */}
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Status</span>
-                <span className="text-xs text-white/60">Early Access</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="inline-block h-4 w-4 rounded-full border-2 border-neon-cyan/70 border-t-transparent animate-spin" />
-                <span className="text-foreground font-medium">Calculating leaderboard…</span>
-              </div>
+        {/* Weekly Podium (Top 3 High Scores) */}
+        <PodiumTopThree entries={weekly_score.top3} />
 
-              {/* subtle animated shimmer */}
-              <div className="pointer-events-none absolute inset-0 opacity-20">
-                <div className="animate-[pulse_2.5s_ease-in-out_infinite] absolute -top-20 -left-32 h-40 w-40 rounded-full bg-neon-cyan/30 blur-[80px]" />
-                <div className="animate-[pulse_3s_ease-in-out_infinite] absolute -bottom-24 -right-32 h-44 w-44 rounded-full bg-neon-pink/30 blur-[90px]" />
-              </div>
-            </div>
+        {/* Tabs */}
+        <LeaderboardTabs active={tab} onChange={setTab} />
 
-            {/* Current User Snapshot */}
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Current Player</p>
-                  <p className="text-foreground font-semibold">{userName}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-muted-foreground">Your Rank</p>
-                  <p className={cn("font-semibold", rank ? "text-neon-yellow" : "text-white/60")}>
-                    {rank ? `#${rank}` : "Calculating"}
-                  </p>
-                </div>
-              </div>
+        {/* Subtitle */}
+        <p className="text-xs text-slate-400 text-center">
+          {tab === "spins"
+            ? "In lossless mode, every spin is a win."
+            : "Safe to play, easy to win — squad up."}
+        </p>
 
-              <Separator className="my-3 bg-white/10" />
-
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <div>Spins: <span className="text-foreground font-medium">{profile?.spins ?? 0}</span></div>
-                <div>Score: <span className="text-foreground font-medium">{profile?.score ?? 0}</span></div>
-                <div>Wins: <span className="text-foreground font-medium">{profile?.wins ?? 0}</span></div>
-              </div>
-            </div>
-
-            {/* Share Actions */}
-            <div className="flex items-center gap-3">
-              <Button
-                onClick={onShareTelegram}
-                className="flex-1 rounded-xl bg-neon-cyan/20 text-neon-cyan hover:bg-neon-cyan/30"
-              >
-                Share on Telegram
-              </Button>
-              <Button
-                onClick={onShareTwitter}
-                className="flex-1 rounded-xl bg-neon-yellow/20 text-neon-yellow hover:bg-neon-yellow/30"
-              >
-                Share on X
-              </Button>
-            </div>
-
-            {/* Subnote */}
-            <p className="text-center text-[11px] text-muted-foreground">
-              We’ll publish the global board as soon as there are enough players to keep things fair.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* (Optional) Placeholder list with skeleton rows */}
-        <Card className="rounded-3xl bg-card/70 backdrop-blur-xl border border-white/10 ring-1 ring-black/20 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
-          <CardHeader className="pb-0">
-            <CardTitle className="text-sm text-muted-foreground">Top Players (Preview)</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-3 space-y-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] p-3"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-full bg-white/10" />
-                  <div className="h-4 w-24 rounded bg-white/10" />
-                </div>
-                <div className="h-4 w-10 rounded bg-white/10" />
-              </div>
-            ))}
-            <p className="text-[11px] text-muted-foreground text-center mt-1">
-              Preview rows are placeholders while rankings are computed.
-            </p>
-          </CardContent>
-        </Card>
+        {/* List for active tab */}
+        {tab === "spins" ? (
+          <LeaderboardList
+            kind="spins"
+            entries={spins.top10}
+            me={spins.me}
+          />
+        ) : (
+          <LeaderboardList
+            kind="referrals"
+            entries={referrals.top10}
+            me={referrals.me}
+          />
+        )}
       </div>
     </div>
   );
-}
+};
+
+/* ---------- Subcomponents ---------- */
+
+const Header: React.FC = () => (
+  <header className="space-y-1">
+    <h1 className="text-3xl font-bold font-orbitron bg-gradient-to-r from-neon-cyan via-neon-yellow to-neon-pink bg-clip-text text-transparent tracking-wide pt-4">
+      Leaderboards
+    </h1>
+    <p className="text-xs text-slate-400">
+      No losses here. Invite the crew and climb together.
+    </p>
+  </header>
+);
+
+const SkeletonBox: React.FC = () => (
+  <div className="h-36 rounded-3xl bg-slate-700/40 animate-pulse" />
+);
+
+/* === Weekly Podium === */
+
+const PodiumTopThree: React.FC<{ entries: WeeklyEntry[] }> = ({ entries }) => {
+  return <WeeklyPodiumClassic entries={entries} />;
+};
+
+
+/* === Tabs === */
+
+const LeaderboardTabs: React.FC<{
+  active: TabKey;
+  onChange: (t: TabKey) => void;
+}> = ({ active, onChange }) => {
+  return (
+    <div className="flex justify-center">
+      <div className="flex w-full max-w-sm p-1 rounded-full bg-white/10">
+        <button
+          onClick={() => onChange("spins")}
+          className={`flex-1 text-center text-[11px] font-semibold py-1.5 rounded-full transition
+          ${active === "spins"
+              ? "bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-slate-900 shadow-lg shadow-cyan-500/30"
+              : "text-slate-200/80 hover:text-slate-50"
+            }`}
+        >
+          Top Spinners
+        </button>
+        <button
+          onClick={() => onChange("referrals")}
+          className={`flex-1 text-center text-[11px] font-semibold py-1.5 rounded-full transition
+          ${active === "referrals"
+              ? "bg-gradient-to-r from-lime-300 to-emerald-400 text-slate-900 shadow-lg shadow-lime-400/30"
+              : "text-slate-200/80 hover:text-slate-50"
+            }`}
+        >
+          Top Referrers
+        </button>
+      </div>
+    </div>
+  );
+};
+
+/* === List + Row === */
+
+type LeaderboardListProps =
+  | {
+    kind: "spins";
+    entries: SpinEntry[];
+    me: SpinEntry | null;
+  }
+  | {
+    kind: "referrals";
+    entries: ReferralEntry[];
+    me: ReferralEntry | null;
+  };
+
+const LeaderboardList: React.FC<LeaderboardListProps> = (props) => {
+  const { entries, kind, me } = props as any;
+
+  const isMe = (entry: any) =>
+    me && (me.id === entry.id || me.telegram_id === entry.telegram_id);
+
+  const inTop = me && entries.some((e: any) => isMe(e));
+
+  return (
+    <section className="space-y-2">
+      <div className="space-y-2">
+        {entries.map((entry: any) => (
+          <LeaderboardRow
+            key={entry.id}
+            kind={kind}
+            entry={entry}
+            highlight={isMe(entry)}
+            showYourRankPill={isMe(entry)}
+          />
+        ))}
+      </div>
+
+      {/* Your rank card (if not in top list but rank exists) */}
+      {!inTop && me && (
+        <div className="pt-1">
+          <p className="text-[10px] text-slate-400 mb-1">Your Rank</p>
+          <LeaderboardRow
+            kind={kind}
+            entry={me}
+            highlight
+            showYourRankPill
+          />
+        </div>
+      )}
+    </section>
+  );
+};
+
+const LeaderboardRow: React.FC<{
+  kind: "spins" | "referrals";
+  entry: any;
+  highlight?: boolean;
+  showYourRankPill?: boolean;
+}> = ({ kind, entry, highlight, showYourRankPill }) => {
+  const label =
+    kind === "spins" ? <>{entry.jackpots > 0 && (<Stat label="JACKPOTS" value={entry.jackpots} small />)}</>
+      : <>{1 > 0 && (<Stat label="DAILY REFERRAL" value={0} small />)}</>;
+
+  return (
+    <div
+      className={`flex items-center justify-between gap-3 rounded-2xl px-3 py-2
+      bg-white/5 border border-white/10
+      ${highlight
+          ? "border-cyan-400 shadow-[0_0_16px_rgba(34,211,238,0.45)]"
+          : "shadow-[0_0_12px_rgba(15,23,42,0.8)]"
+        }`}
+    >
+      {/* left side */}
+      <div className="flex items-center gap-2 min-w-0">
+
+
+        {/* avatar + name */}
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-8 h-8 rounded-full bg-slate-800/80 flex items-center justify-center text-[11px] text-slate-200">
+            <img className="rounded-full" src={entry?.photo_url} />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-1 min-w-0">
+              <p className="text-sm font-medium truncate">
+                {entry.display_name}
+              </p>
+              {showYourRankPill && (
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-400/60">
+                  YOUR RANK
+                </span>
+              )}
+            </div>
+            <div className="text-[10px] text-slate-400 uppercase tracking-[0.16em]">
+              {label}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        {/* right side numbers */}
+        <div className="text-right shrink-0">
+          {kind === "spins" ? (
+            <div className="space-y-0.5">
+              <Stat label="SPINS" value={entry.spins} divider />
+            </div>
+          ) : (
+            <Stat label="ALL REFERRALS" value={entry.referrals} divider />
+          )}
+        </div>
+        {/* rank badge */}
+        <div
+          className={`flex items-center justify-center w-7 h-7 rounded-full text-[11px] font-semibold
+          ${entry.rank === 1
+              ? "bg-gradient-to-br from-cyan-300 to-blue-500 text-slate-900"
+              : entry.rank === 2
+                ? "bg-gradient-to-br from-yellow-300 to-amber-500 text-slate-900"
+                : entry.rank === 3
+                  ? "bg-gradient-to-br from-orange-300 to-orange-500 text-slate-900"
+                  : "bg-slate-900 border border-slate-500 text-slate-100"
+            }`}
+        >
+          #{entry.rank}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Stat: React.FC<{
+  label: string;
+  value: number;
+  small?: boolean;
+  divider?: boolean;
+}> = ({ label, value, small, divider }) => (
+  <div>
+    <span className="text-[9px] text-slate-400 tracking-[0.18em]">
+      {label}
+    </span>
+    {divider ? <br /> : " "}
+    <span
+      className={`${small ? "text-xs" : "text-sm"
+        } font-semibold ${divider ? "text-purple-400" : "text-yellow-400"} `}
+    >
+      {value}
+    </span>
+  </div>
+);
+
+export default LeaderboardsPage;

@@ -9,13 +9,13 @@ type NavItem = {
   path: string;
   label: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  badge?: number;
+  badge?: string;
 };
 
 const navItems: NavItem[] = [
   { path: "/", label: "Play", icon: Gamepad2 },
   { path: "/chips", label: "Tasks", icon: Coins }, // example badge
-  { path: "/leaderboard", label: "Leaders", icon: ChartColumnBig }, // example badge
+  { path: "/leaderboard", label: "Leaders", icon: ChartColumnBig, badge: "LV" }, // example badge
   { path: "/profile", label: "Profile", icon: User },
 ];
 
