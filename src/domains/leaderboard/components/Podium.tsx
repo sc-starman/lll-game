@@ -37,9 +37,9 @@ export const WeeklyPodiumClassic: React.FC<{ entries: WeeklyEntry[] }> = ({
 
             {/* خود پودیوم - 2 / 1 / 3 مثل تصویر */}
             <div className="relative mt-1 flex items-end justify-between gap-2 h-28">
-                <PodiumColumn place={2} entry={second} imgSrc="/imgs/bcup.png" />
+                <PodiumColumn place={2} entry={second} imgSrc="/imgs/gcup.png" />
                 <PodiumColumn place={1} entry={first} imgSrc="/imgs/dcup.png" />
-                <PodiumColumn place={3} entry={third} imgSrc="/imgs/gcup.png" />
+                <PodiumColumn place={3} entry={third} imgSrc="/imgs/bcup.png" />
             </div>
         </section>
     );
